@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using NoExp.Presentation.Components;
 using NoExp.Presentation.Components.Account;
 using NoExp.Presentation.Data;
@@ -40,6 +41,8 @@ namespace NoExp.Presentation
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+            builder.Services.AddMudServices();
 
             var app = builder.Build();
 
