@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using NoExp.Presentation.Data;
+using NoExp.Infrastructure.Persistence;
 
 namespace NoExp.Presentation.Components.Account
 {

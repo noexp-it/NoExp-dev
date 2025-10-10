@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using NoExp.Infrastructure.Persistence;
 using NoExp.Presentation.Components;
 using NoExp.Presentation.Components.Account;
-using NoExp.Presentation.Data;
 
 namespace NoExp.Presentation
 {
