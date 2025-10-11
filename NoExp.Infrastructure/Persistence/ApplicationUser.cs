@@ -1,10 +1,21 @@
 using Microsoft.AspNetCore.Identity;
+using NoExp.Domain.Entities.Abstracts;
 
-namespace NoExp.Presentation.Data
+namespace NoExp.Infrastructure.Persistence
 {
-    // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        public string FirstName { get; set; } = string.Empty;
+
+        public string LastName { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? LastLoginAt { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public virtual UserProfile? UserProfile { get; set; }
     }
 
 }
