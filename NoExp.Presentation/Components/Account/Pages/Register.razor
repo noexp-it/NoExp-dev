@@ -5,6 +5,7 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
+@using NoExp.Domain.Entities
 @using NoExp.Domain.Entities.Abstracts
 @using NoExp.Domain.Enums
 @using NoExp.Infrastructure.Persistence
@@ -29,6 +30,17 @@
             <h2>Create a new account.</h2>
             <hr />
             <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="Input.Profile" id="Input.Profile" class="form-select">
+                    <option value="">Please, select your account type here</option>
+                    <option value="Candidate">Candidate</option>
+                    <option value="Employer">Employer</option>
+                </InputSelect>
+                <label for="Input.Profile">Account Type</label>
+                <ValidationMessage For="@(() => Input.Profile)" class="text-danger" />
+            </div>
+
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label for="Input.Email">Email</label>
@@ -44,6 +56,7 @@
                 <label for="Input.ConfirmPassword">Confirm Password</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
+
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
     </div>
@@ -76,40 +89,22 @@
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
 
-        // Create User Profile
-        // UserProfile profile = user.UserType switch
-        // {
-        //     UserType.Candidate => new CandidateProfile
-        //     {
-        //         Id = Guid.NewGuid().ToString(),
-        //         UserId = user.Id,
-        //         Bio = dto.Bio,
-        //         Website = dto.Website,
-        //         Location = dto.Location,
-        //         Skills = dto.Skills,
-        //         Experience = dto.Experience,
-        //         IsOpenToWork = dto.IsOpenToWork,
-        //         ExpectedSalary = dto.ExpectedSalary
-        //     },
-        //     UserType.Employer => new EmployerProfile
-        //     {
-        //         Id = Guid.NewGuid().ToString(),
-        //         UserId = user.Id,
-        //         Bio = dto.Bio,
-        //         Website = dto.Website,
-        //         Location = dto.Location,
-        //         CompanyName = dto.CompanyName ?? string.Empty,
-        //         Industry = dto.Industry,
-        //         CompanySize = dto.CompanySize
-        //     },
-        //     _ => throw new ArgumentException("Nieprawidłowy typ użytkownika")
-        // };
+        UserProfile profile = Input.Profile switch
+        {
+            "Candidate" => new CandidateProfile
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = user.Id,
+                },
+            "Employer" => new EmployerProfile
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = user.Id,
+                },
+            _ => throw new ArgumentException("Nieprawidłowy typ użytkownika")
+        };
 
-        // _context.UserProfiles.Add(profile);
-        // await _context.SaveChangesAsync();
-
-        // Dodanie roli
-        // await _userManager.AddToRoleAsync(user, dto.UserType.ToString());
+        user.UserProfile = profile;
 
         if (!result.Succeeded)
         {
@@ -178,5 +173,9 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Profile")]
+        public string Profile { get; set; } = string.Empty;
     }
 }
