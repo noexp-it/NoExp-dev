@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoExp.Domain.Interfaces
+namespace NoExp.Application.Interfaces
 {
-    public interface IUserRepository
+    public interface IRegistrationService
     {
     }
 }

@@ -2,7 +2,12 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using NoExp.Application.Interfaces;
+using NoExp.Application.Services;
+using NoExp.Domain.Entities.Interfaces;
+using NoExp.Domain.Interfaces;
 using NoExp.Infrastructure.Persistence;
+using NoExp.Infrastructure.Repositories;
 using NoExp.Presentation.Components;
 using NoExp.Presentation.Components.Account;
 
@@ -35,7 +40,7 @@ namespace NoExp.Presentation
                 options.UseNpgsql(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentityCore<IApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
@@ -43,6 +48,8 @@ namespace NoExp.Presentation
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             builder.Services.AddMudServices();
+
+            builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
 
             var app = builder.Build();
 
