@@ -9,6 +9,6 @@ namespace NoExp.Domain.Interfaces
 {
     public interface IProfileRepository
     {
-        public void AddProfileAsync(UserProfile profile);
+        public Task<UserProfile> AddProfileAsync(UserProfile userProfile);
     }
 }

@@ -11,10 +11,11 @@ namespace NoExp.Infrastructure.Repositories
 {
     public class ProfileRepository(ApplicationDbContext context) : IProfileRepository
     {
-        public async void AddProfileAsync(UserProfile profile)
+        public async Task<UserProfile> AddProfileAsync(UserProfile userProfile)
         {
-            context.UserProfiles.Add(profile);
+            context.UserProfiles.Add(userProfile);
             await context.SaveChangesAsync();
+            return userProfile;
         }
     }
 }
