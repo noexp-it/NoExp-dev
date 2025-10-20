@@ -40,7 +40,7 @@ namespace NoExp.Infrastructure.Repositories
                 throw new InvalidOperationException("Employer profile not found.");
 
             existing.CompanyName = updatedProfile.CompanyName;
-            existing.Industry = updatedProfile.Industry;
+            existing.IdentificationNumber = updatedProfile.IdentificationNumber;
             existing.CompanySize = updatedProfile.CompanySize;
             existing.CompanyDescription = updatedProfile.CompanyDescription;
             existing.CompanyAddress = updatedProfile.CompanyAddress;

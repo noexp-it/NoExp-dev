@@ -8,9 +8,7 @@
 @using NoExp.Domain.Entities.Abstracts
 @using NoExp.Infrastructure.Persistence
 
-@inject IdentityUserAccessor UserAccessor
 @inject AuthenticationStateProvider AuthStateProvider
-@inject SignInManager<ApplicationUser> SignInManager
 @inject IProfileService ProfileService
 @inject MudBlazor.ISnackbar Snackbar
 
@@ -18,8 +16,6 @@
 <PageTitle>Employer Profile</PageTitle>
 
 <h3>Employer Profile</h3>
-@* <StatusMessage Message="@statusMessage" /> *@
-
 
     <EditForm @bind-Model="Input" FormName="employerProfile" OnValidSubmit="@OnValidSubmitAsync">
         <DataAnnotationsValidator />
@@ -32,9 +28,15 @@
         </div>
 
         <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.Industry" id="Industry" class="form-control" placeholder="Industry" />
-            <label for="Industry">Industry</label>
-            <ValidationMessage For="() => Input.Industry" class="text-danger" />
+        <InputNumber @bind-Value="Input.IdentificationNumber" id="IdentificationNumber" class="form-control" placeholder="Identification number" />
+        <label for="IdentificationNumber">Identification number</label>
+        <ValidationMessage For="() => Input.IdentificationNumber" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
+            <label for="CompanyAddress">Company address</label>
+            <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
         </div>
 
         <div class="form-floating mb-3">
@@ -47,12 +49,6 @@
             <InputTextArea @bind-Value="Input.CompanyDescription" id="CompanyDescription" class="form-control" style="height: 100px" placeholder="Tell something about your company" />
             <label for="CompanyDescription">Company description</label>
             <ValidationMessage For="() => Input.CompanyDescription" class="text-danger" />
-        </div>
-
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
-            <label for="CompanyAddress">Company address</label>
-            <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
         </div>
 
         <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
@@ -76,7 +72,7 @@
         if (employerProfile != null)
         {
             Input.CompanyName = employerProfile.CompanyName;
-            Input.Industry = employerProfile.Industry;
+            Input.IdentificationNumber = employerProfile.IdentificationNumber;
             Input.CompanySize = employerProfile.CompanySize;
             Input.CompanyDescription = employerProfile.CompanyDescription;
             Input.CompanyAddress = employerProfile.CompanyAddress;
@@ -95,7 +91,7 @@
             if (existingProfile != null)
             {
                 existingProfile.CompanyName = Input.CompanyName;
-                existingProfile.Industry = Input.Industry;
+                existingProfile.IdentificationNumber = Input.IdentificationNumber;
                 existingProfile.CompanySize = Input.CompanySize;
                 existingProfile.CompanyDescription = Input.CompanyDescription;
                 existingProfile.CompanyAddress = Input.CompanyAddress;
@@ -109,7 +105,7 @@
                 {
                     UserId = userId,
                     CompanyName = Input.CompanyName,
-                    Industry = Input.Industry,
+                    IdentificationNumber = Input.IdentificationNumber,
                     CompanySize = Input.CompanySize,
                     CompanyDescription = Input.CompanyDescription,
                     CompanyAddress = Input.CompanyAddress,
@@ -132,13 +128,16 @@
         [Required(ErrorMessage = "Company name is required")]
         public string CompanyName { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Identification number is required")]
+        public int IdentificationNumber { get; set; }
+
+        public string? CompanyAddress { get; set; } = string.Empty;
+
         public string? Industry { get; set; } = string.Empty;
 
         [Range(1, 100000, ErrorMessage = "Please enter a valid company size")]
         public int? CompanySize { get; set; } = 0;
 
         public string? CompanyDescription { get; set; } = string.Empty;
-
-        public string? CompanyAddress { get; set; } = string.Empty;
     }
 }
