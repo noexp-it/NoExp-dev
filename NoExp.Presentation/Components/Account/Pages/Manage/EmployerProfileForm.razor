@@ -1,60 +1,65 @@
 ﻿@page "/Account/Manage/EmployerProfile"
+@rendermode InteractiveServer
 
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
 @using NoExp.Application.Interfaces
 @using NoExp.Domain.Entities
 @using NoExp.Domain.Entities.Abstracts
 @using NoExp.Infrastructure.Persistence
 
 @inject IdentityUserAccessor UserAccessor
+@inject AuthenticationStateProvider AuthStateProvider
+@inject SignInManager<ApplicationUser> SignInManager
 @inject IProfileService ProfileService
+@inject MudBlazor.ISnackbar Snackbar
+
 
 <PageTitle>Employer Profile</PageTitle>
 
 <h3>Employer Profile</h3>
-<StatusMessage Message="@statusMessage" />
+@* <StatusMessage Message="@statusMessage" /> *@
 
-<EditForm Model="Input" FormName="employerProfile" OnValidSubmit="@OnValidSubmitAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" />
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.CompanyName" id="CompanyName" class="form-control" placeholder="Company Name" />
-        <label for="CompanyName">Company name</label>
-        <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
-    </div>
+    <EditForm @bind-Model="Input" FormName="employerProfile" OnValidSubmit="@OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Industry" id="Industry" class="form-control" placeholder="Industry" />
-        <label for="Industry">Industry</label>
-        <ValidationMessage For="() => Input.Industry" class="text-danger" />
-    </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.CompanyName" id="CompanyName" class="form-control" placeholder="Company Name" />
+            <label for="CompanyName">Company name</label>
+            <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
+        </div>
 
-    <div class="form-floating mb-3">
-        <InputNumber @bind-Value="Input.CompanySize" id="CompanySize" class="form-control" placeholder="Company size" />
-        <label for="CompanySize">Company size</label>
-        <ValidationMessage For="() => Input.CompanySize" class="text-danger" />
-    </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Industry" id="Industry" class="form-control" placeholder="Industry" />
+            <label for="Industry">Industry</label>
+            <ValidationMessage For="() => Input.Industry" class="text-danger" />
+        </div>
 
-    <div class="form-floating mb-3">
-        <InputTextArea @bind-Value="Input.CompanyDescription" id="CompanyDescription" class="form-control" style="height: 100px" placeholder="Tell something about your company" />
-        <label for="CompanyDescription">Company description</label>
-        <ValidationMessage For="() => Input.CompanyDescription" class="text-danger" />
-    </div>
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="Input.CompanySize" id="CompanySize" class="form-control" placeholder="Company size" />
+            <label for="CompanySize">Company size</label>
+            <ValidationMessage For="() => Input.CompanySize" class="text-danger" />
+        </div>
 
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
-        <label for="CompanyAddress">Company address</label>
-        <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
-    </div>
+        <div class="form-floating mb-3">
+            <InputTextArea @bind-Value="Input.CompanyDescription" id="CompanyDescription" class="form-control" style="height: 100px" placeholder="Tell something about your company" />
+            <label for="CompanyDescription">Company description</label>
+            <ValidationMessage For="() => Input.CompanyDescription" class="text-danger" />
+        </div>
 
-    <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-</EditForm>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
+            <label for="CompanyAddress">Company address</label>
+            <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
+        </div>
+
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </EditForm>
+
 
 @code {
-    private ApplicationUser user = default!;
-    private string? statusMessage;
-
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
@@ -63,8 +68,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(user.Id);
+        var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+        var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+
+        EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
 
         if (employerProfile != null)
         {
@@ -78,13 +85,12 @@
 
     private async Task OnValidSubmitAsync()
     {
-        statusMessage = null;
-
         try
         {
-            user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+            var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+            var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
 
-            var existingProfile = await ProfileService.GetEmployerProfileByUserIdAsync(user.Id);
+            var existingProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
 
             if (existingProfile != null)
             {
@@ -101,7 +107,7 @@
             {
                 var newProfile = new EmployerProfile
                 {
-                    UserId = user.Id,
+                    UserId = userId,
                     CompanyName = Input.CompanyName,
                     Industry = Input.Industry,
                     CompanySize = Input.CompanySize,
@@ -113,11 +119,11 @@
                 await ProfileService.SaveProfileAsync(newProfile);
             }
 
-            statusMessage = "Your profile has been updated successfully.";
+            Snackbar.Add("Your profile has been updated successfully.", MudBlazor.Severity.Success);
         }
         catch (Exception ex)
         {
-            statusMessage = $"Error: {ex.Message}";
+            Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
         }
     }
 
