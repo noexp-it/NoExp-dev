@@ -1,0 +1,138 @@
+﻿@page "/Account/Manage/EmployerProfile"
+
+@using System.ComponentModel.DataAnnotations
+@using NoExp.Application.Interfaces
+@using NoExp.Domain.Entities
+@using NoExp.Domain.Entities.Abstracts
+@using NoExp.Infrastructure.Persistence
+
+@inject IdentityUserAccessor UserAccessor
+@inject IProfileService ProfileService
+
+<PageTitle>Employer Profile</PageTitle>
+
+<h3>Employer Profile</h3>
+<StatusMessage Message="@statusMessage" />
+
+<EditForm Model="Input" FormName="employerProfile" OnValidSubmit="@OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" />
+
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="Input.CompanyName" id="CompanyName" class="form-control" placeholder="Company Name" />
+        <label for="CompanyName">Company name</label>
+        <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
+    </div>
+
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="Input.Industry" id="Industry" class="form-control" placeholder="Industry" />
+        <label for="Industry">Industry</label>
+        <ValidationMessage For="() => Input.Industry" class="text-danger" />
+    </div>
+
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="Input.CompanySize" id="CompanySize" class="form-control" placeholder="Company size" />
+        <label for="CompanySize">Company size</label>
+        <ValidationMessage For="() => Input.CompanySize" class="text-danger" />
+    </div>
+
+    <div class="form-floating mb-3">
+        <InputTextArea @bind-Value="Input.CompanyDescription" id="CompanyDescription" class="form-control" style="height: 100px" placeholder="Tell something about your company" />
+        <label for="CompanyDescription">Company description</label>
+        <ValidationMessage For="() => Input.CompanyDescription" class="text-danger" />
+    </div>
+
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
+        <label for="CompanyAddress">Company address</label>
+        <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
+    </div>
+
+    <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+</EditForm>
+
+@code {
+    private ApplicationUser user = default!;
+    private string? statusMessage;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private CompanyProfileModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(user.Id);
+
+        if (employerProfile != null)
+        {
+            Input.CompanyName = employerProfile.CompanyName;
+            Input.Industry = employerProfile.Industry;
+            Input.CompanySize = employerProfile.CompanySize;
+            Input.CompanyDescription = employerProfile.CompanyDescription;
+            Input.CompanyAddress = employerProfile.CompanyAddress;
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        statusMessage = null;
+
+        try
+        {
+            user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+
+            var existingProfile = await ProfileService.GetEmployerProfileByUserIdAsync(user.Id);
+
+            if (existingProfile != null)
+            {
+                existingProfile.CompanyName = Input.CompanyName;
+                existingProfile.Industry = Input.Industry;
+                existingProfile.CompanySize = Input.CompanySize;
+                existingProfile.CompanyDescription = Input.CompanyDescription;
+                existingProfile.CompanyAddress = Input.CompanyAddress;
+                existingProfile.UpdatedAt = DateTime.UtcNow;
+
+                await ProfileService.UpdateEmployerProfileAsync(existingProfile);
+            }
+            else
+            {
+                var newProfile = new EmployerProfile
+                {
+                    UserId = user.Id,
+                    CompanyName = Input.CompanyName,
+                    Industry = Input.Industry,
+                    CompanySize = Input.CompanySize,
+                    CompanyDescription = Input.CompanyDescription,
+                    CompanyAddress = Input.CompanyAddress,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await ProfileService.SaveProfileAsync(newProfile);
+            }
+
+            statusMessage = "Your profile has been updated successfully.";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private sealed class CompanyProfileModel
+    {
+        [Required(ErrorMessage = "Company name is required")]
+        public string CompanyName { get; set; } = string.Empty;
+
+        public string? Industry { get; set; } = string.Empty;
+
+        [Range(1, 100000, ErrorMessage = "Please enter a valid company size")]
+        public int? CompanySize { get; set; } = 0;
+
+        public string? CompanyDescription { get; set; } = string.Empty;
+
+        public string? CompanyAddress { get; set; } = string.Empty;
+    }
+}

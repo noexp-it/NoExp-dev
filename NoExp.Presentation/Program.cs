@@ -49,7 +49,7 @@ namespace NoExp.Presentation
             builder.Services.AddMudServices();
 
             builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
-            builder.Services.AddTransient<IRegistrationService, RegistrationService>();
+            builder.Services.AddTransient<IProfileService, ProfileService>();
 
             var app = builder.Build();
 

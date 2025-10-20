@@ -6,13 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoExp.Domain.Interfaces
+namespace NoExp.Application.Interfaces
 {
-    public interface IProfileRepository
+    public interface IProfileService
     {
-        public Task<UserProfile> AddProfileAsync(UserProfile userProfile);
+        public Task<UserProfile> SaveProfileAsync(UserProfile userProfile);
+
         public Task<EmployerProfile> GetEmployerProfileByUserIdAsync(string userId);
+
         public Task<CandidateProfile> GetCandidateProfileByUserIdAsync(string userId);
-        public Task<EmployerProfile> UpdateEmployerProfileAsync(EmployerProfile updatedProfile);
+
+        public Task<EmployerProfile> UpdateEmployerProfileAsync(EmployerProfile updatedEmployerProfile);
     }
 }
