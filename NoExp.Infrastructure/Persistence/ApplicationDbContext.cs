@@ -10,6 +10,8 @@ namespace NoExp.Infrastructure.Persistence
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<CandidateProfile> CandidateProfiles { get; set; }
         public DbSet<EmployerProfile> EmployerProfiles { get; set; }
+        
+        public DbSet<JobAd> JobAds { get; set; }
 
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -43,6 +45,12 @@ namespace NoExp.Infrastructure.Persistence
             builder.Entity<CandidateProfile>()
                 .Property(c => c.ExpectedSalary)
                 .HasPrecision(18, 2);
+
+            builder.Entity<EmployerProfile>()
+                .HasMany(e => e.JobAds)
+                .WithOne(e => e.EmployerProfile)
+                .HasForeignKey(e => e.EmployerProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

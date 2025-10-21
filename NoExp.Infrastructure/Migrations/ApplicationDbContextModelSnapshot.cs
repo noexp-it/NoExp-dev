@@ -195,6 +195,70 @@ namespace NoExp.Infrastructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("NoExp.Domain.Entities.JobAd", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmployerProfileId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Offer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PublishDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Requirements")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Responsibilities")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Salary")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkMode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployerProfileId");
+
+                    b.ToTable("JobAds");
+                });
+
             modelBuilder.Entity("NoExp.Infrastructure.Persistence.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -392,9 +456,25 @@ namespace NoExp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NoExp.Domain.Entities.JobAd", b =>
+                {
+                    b.HasOne("NoExp.Domain.Entities.EmployerProfile", "EmployerProfile")
+                        .WithMany("JobAds")
+                        .HasForeignKey("EmployerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmployerProfile");
+                });
+
             modelBuilder.Entity("NoExp.Infrastructure.Persistence.ApplicationUser", b =>
                 {
                     b.Navigation("UserProfile");
+                });
+
+            modelBuilder.Entity("NoExp.Domain.Entities.EmployerProfile", b =>
+                {
+                    b.Navigation("JobAds");
                 });
 #pragma warning restore 612, 618
         }
