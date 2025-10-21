@@ -322,8 +322,9 @@ namespace NoExp.Infrastructure.Migrations
                     b.Property<int?>("CompanySize")
                         .HasColumnType("integer");
 
-                    b.Property<int>("IdentificationNumber")
-                        .HasColumnType("integer");
+                    b.Property<string>("IdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("boolean");

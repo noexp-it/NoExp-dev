@@ -8,7 +8,7 @@ namespace NoExp.Domain.Entities
         public override UserType UserType => UserType.Employer;
 
         public string CompanyName { get; set; } = string.Empty;
-        public int IdentificationNumber { get; set; }
+        public string IdentificationNumber { get; set; } = "0000000000";
         public string? CompanyDescription { get; set; }
         public int? CompanySize { get; set; }
         public string? CompanyAddress { get; set; }
