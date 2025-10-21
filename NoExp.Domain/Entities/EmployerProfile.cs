@@ -12,6 +12,9 @@ namespace NoExp.Domain.Entities
         public string? CompanyDescription { get; set; }
         public int? CompanySize { get; set; }
         public string? CompanyAddress { get; set; }
+        
         public bool IsVerified { get; set; } = false;
+        
+        public List<JobAd> JobAds { get; set; } = new List<JobAd>();
     }
 }
