@@ -129,11 +129,10 @@
         public string CompanyName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Identification number is required")]
+        [StringLength(10, ErrorMessage = "The Identification Number must be at 10 characters long.", MinimumLength = 10)]
         public int IdentificationNumber { get; set; }
 
         public string? CompanyAddress { get; set; } = string.Empty;
-
-        public string? Industry { get; set; } = string.Empty;
 
         [Range(1, 100000, ErrorMessage = "Please enter a valid company size")]
         public int? CompanySize { get; set; } = 0;
