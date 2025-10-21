@@ -8,9 +8,9 @@ namespace NoExp.Domain.Entities
         public override UserType UserType => UserType.Employer;
 
         public string CompanyName { get; set; } = string.Empty;
-        public string? Industry { get; set; }
-        public int? CompanySize { get; set; }
+        public int IdentificationNumber { get; set; }
         public string? CompanyDescription { get; set; }
+        public int? CompanySize { get; set; }
         public string? CompanyAddress { get; set; }
         public bool IsVerified { get; set; } = false;
     }

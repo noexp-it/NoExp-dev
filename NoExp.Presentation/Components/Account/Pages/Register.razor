@@ -18,7 +18,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@inject IRegistrationService RegistrationService
+@inject IProfileService ProfileService
 
 <PageTitle>Register</PageTitle>
 
@@ -107,7 +107,7 @@
         };
 
         user.UserProfile = profile;
-        await RegistrationService.SaveProfileAsync(profile);
+        await ProfileService.SaveProfileAsync(profile);
 
         if (!result.Succeeded)
         {

@@ -1,0 +1,142 @@
+﻿@page "/Account/Manage/EmployerProfile"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using NoExp.Application.Interfaces
+@using NoExp.Domain.Entities
+@using NoExp.Domain.Entities.Abstracts
+@using NoExp.Infrastructure.Persistence
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IProfileService ProfileService
+@inject MudBlazor.ISnackbar Snackbar
+
+
+<PageTitle>Employer Profile</PageTitle>
+
+<h3>Employer Profile</h3>
+
+    <EditForm @bind-Model="Input" FormName="employerProfile" OnValidSubmit="@OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.CompanyName" id="CompanyName" class="form-control" placeholder="Company Name" />
+            <label for="CompanyName">Company name</label>
+            <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+        <InputNumber @bind-Value="Input.IdentificationNumber" id="IdentificationNumber" class="form-control" placeholder="Identification number" />
+        <label for="IdentificationNumber">Identification number</label>
+        <ValidationMessage For="() => Input.IdentificationNumber" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.CompanyAddress" id="CompanyAddress" class="form-control" placeholder="Company address" />
+            <label for="CompanyAddress">Company address</label>
+            <ValidationMessage For="() => Input.CompanyAddress" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="Input.CompanySize" id="CompanySize" class="form-control" placeholder="Company size" />
+            <label for="CompanySize">Company size</label>
+            <ValidationMessage For="() => Input.CompanySize" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputTextArea @bind-Value="Input.CompanyDescription" id="CompanyDescription" class="form-control" style="height: 100px" placeholder="Tell something about your company" />
+            <label for="CompanyDescription">Company description</label>
+            <ValidationMessage For="() => Input.CompanyDescription" class="text-danger" />
+        </div>
+
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </EditForm>
+
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private CompanyProfileModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+        var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+
+        EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
+
+        if (employerProfile != null)
+        {
+            Input.CompanyName = employerProfile.CompanyName;
+            Input.IdentificationNumber = employerProfile.IdentificationNumber;
+            Input.CompanySize = employerProfile.CompanySize;
+            Input.CompanyDescription = employerProfile.CompanyDescription;
+            Input.CompanyAddress = employerProfile.CompanyAddress;
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        try
+        {
+            var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+            var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+
+            var existingProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
+
+            if (existingProfile != null)
+            {
+                existingProfile.CompanyName = Input.CompanyName;
+                existingProfile.IdentificationNumber = Input.IdentificationNumber;
+                existingProfile.CompanySize = Input.CompanySize;
+                existingProfile.CompanyDescription = Input.CompanyDescription;
+                existingProfile.CompanyAddress = Input.CompanyAddress;
+                existingProfile.UpdatedAt = DateTime.UtcNow;
+
+                await ProfileService.UpdateEmployerProfileAsync(existingProfile);
+            }
+            else
+            {
+                var newProfile = new EmployerProfile
+                {
+                    UserId = userId,
+                    CompanyName = Input.CompanyName,
+                    IdentificationNumber = Input.IdentificationNumber,
+                    CompanySize = Input.CompanySize,
+                    CompanyDescription = Input.CompanyDescription,
+                    CompanyAddress = Input.CompanyAddress,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await ProfileService.SaveProfileAsync(newProfile);
+            }
+
+            Snackbar.Add("Your profile has been updated successfully.", MudBlazor.Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
+        }
+    }
+
+    private sealed class CompanyProfileModel
+    {
+        [Required(ErrorMessage = "Company name is required")]
+        public string CompanyName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Identification number is required")]
+        [StringLength(10, ErrorMessage = "The Identification Number must be at 10 characters long.", MinimumLength = 10)]
+        public int IdentificationNumber { get; set; }
+
+        public string? CompanyAddress { get; set; } = string.Empty;
+
+        [Range(1, 100000, ErrorMessage = "Please enter a valid company size")]
+        public int? CompanySize { get; set; } = 0;
+
+        public string? CompanyDescription { get; set; } = string.Empty;
+    }
+}
