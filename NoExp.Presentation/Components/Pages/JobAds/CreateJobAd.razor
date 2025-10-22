@@ -1,0 +1,56 @@
+﻿@page "/JobAds/Create"
+
+@using NoExp.Domain.Entities
+@using NoExp.Domain.Enums.JobAd
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
+    <MudForm @ref="_form" Model="_jobAd" @bind-IsValid="_isValid">
+
+        <MudTextField @bind-Value="_jobAd.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => _jobAd.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
+        
+        <MudTextField @bind-Value="_jobAd.Description" Label="Description" Variant="Variant.Outlined" For="@(() => _jobAd.Description)" Required="true" Lines="4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+
+        <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="_jobAd.Type" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+            @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
+            {
+                <MudSelectItem Value="@type">@type</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="_jobAd.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+            @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
+            {
+                <MudSelectItem Value="@mode">@mode</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField @bind-Value="_jobAd.Location" Label="Location" Variant="Variant.Outlined" For="@(() => _jobAd.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
+
+        <MudTextField @bind-Value="_jobAd.Salary" Label="Salary" Variant="Variant.Outlined" For="@(() => _jobAd.Salary)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+
+        <MudTextField @bind-Value="_jobAd.Requirements" Variant="Variant.Outlined" Label="Requirements" For="@(() => _jobAd.Requirements)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        
+        <MudTextField @bind-Value="_jobAd.Responsibilities" Variant="Variant.Outlined" Label="Responsibilities" For="@(() => _jobAd.Responsibilities)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        
+        <MudTextField @bind-Value="_jobAd.Offer" Variant="Variant.Outlined" Label="Offer Details" For="@(() => _jobAd.Offer)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        
+        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
+    </MudForm>
+</MudPaper>
+
+@code {
+    private MudForm? _form;
+    private JobAd _jobAd = new();
+    private bool _isValid = false;
+
+    private async Task Submit()
+    {
+        await _form!.Validate();
+        if (_isValid)
+        {
+            // handle save logic here
+            await DialogService.ShowMessageBox("Success", "Job Ad submitted successfully!");
+        }
+    }
+}
