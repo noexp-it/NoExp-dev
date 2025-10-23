@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NoExp.Infrastructure.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NoExp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021131318_IdentificationNumberTypeChange")]
+    partial class IdentificationNumberTypeChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,73 +196,6 @@ namespace NoExp.Infrastructure.Migrations
                     b.HasDiscriminator<string>("ProfileType").HasValue("UserProfile");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("NoExp.Domain.Entities.JobAd", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("EmployerProfileId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Offer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("PublishDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Requirements")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Responsibilities")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("SalaryMax")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("SalaryMin")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("WorkMode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WorkStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WorkType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployerProfileId");
-
-                    b.ToTable("JobAds");
                 });
 
             modelBuilder.Entity("NoExp.Infrastructure.Persistence.ApplicationUser", b =>
@@ -459,25 +395,9 @@ namespace NoExp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NoExp.Domain.Entities.JobAd", b =>
-                {
-                    b.HasOne("NoExp.Domain.Entities.EmployerProfile", "EmployerProfile")
-                        .WithMany("JobAds")
-                        .HasForeignKey("EmployerProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EmployerProfile");
-                });
-
             modelBuilder.Entity("NoExp.Infrastructure.Persistence.ApplicationUser", b =>
                 {
                     b.Navigation("UserProfile");
-                });
-
-            modelBuilder.Entity("NoExp.Domain.Entities.EmployerProfile", b =>
-                {
-                    b.Navigation("JobAds");
                 });
 #pragma warning restore 612, 618
         }

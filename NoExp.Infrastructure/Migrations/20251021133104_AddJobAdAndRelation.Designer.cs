@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NoExp.Infrastructure.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NoExp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021133104_AddJobAdAndRelation")]
+    partial class AddJobAdAndRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,7 +212,7 @@ namespace NoExp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("ExpirationDate")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Location")
@@ -232,10 +235,7 @@ namespace NoExp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("SalaryMax")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("SalaryMin")
+                    b.Property<decimal?>("Salary")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Title")
@@ -243,15 +243,11 @@ namespace NoExp.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("WorkMode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WorkStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WorkType")
                         .IsRequired()
                         .HasColumnType("text");
 
