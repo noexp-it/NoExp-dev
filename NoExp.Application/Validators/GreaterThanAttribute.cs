@@ -11,8 +11,10 @@ public class GreaterThanAttribute(string comparisonProperty) : ValidationAttribu
         var property = validationContext.ObjectType.GetProperty(comparisonProperty);
 
         if (property == null)
+        {
             return new ValidationResult($"Unknown property: {comparisonProperty}");
-
+        }
+            
         var comparisonValue = (decimal?)property.GetValue(validationContext.ObjectInstance);
 
         if (currentValue.HasValue && comparisonValue.HasValue)
