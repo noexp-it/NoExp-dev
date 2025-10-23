@@ -14,7 +14,7 @@ public class JobAd
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    public WorkType Type { get; set; }
+    public WorkType WorkType { get; set; }
 
     [Required, MaxLength(100)]
     public string Location { get; set; } = string.Empty;
@@ -22,7 +22,11 @@ public class JobAd
     [Required] 
     public WorkMode WorkMode { get; set; }
 
-    public decimal? Salary { get; set; }
+    [Required]
+    public decimal? SalaryMin { get; set; }
+
+    [Required]
+    public decimal? SalaryMax { get; set; }
 
     [Required]
     public string Requirements { get; set; } = string.Empty;
@@ -34,7 +38,7 @@ public class JobAd
     public string Offer { get; set; } = string.Empty;
 
     public DateTime PublishDate { get; set; } = DateTime.UtcNow;
-    public DateTime ExpirationDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
 
     public WorkStatus WorkStatus { get; set; } = WorkStatus.Inactive;
     

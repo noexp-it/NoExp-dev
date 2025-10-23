@@ -1,56 +1,148 @@
 ﻿@page "/JobAds/Create"
 
+@using System.ComponentModel.DataAnnotations
+@using NoExp.Application.Interfaces
+@using NoExp.Application.Services
 @using NoExp.Domain.Entities
 @using NoExp.Domain.Enums.JobAd
+@using NoExp.Infrastructure.Persistence
+@using NoExp.Presentation.Components.Account
+
 @inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IProfileService ProfileService
+@inject MudBlazor.ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
-    <MudForm @ref="_form" Model="_jobAd" @bind-IsValid="_isValid">
+    <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid">
 
-        <MudTextField @bind-Value="_jobAd.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => _jobAd.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
+        <MudTextField @bind-Value="Input.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => Input.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
         
-        <MudTextField @bind-Value="_jobAd.Description" Label="Description" Variant="Variant.Outlined" For="@(() => _jobAd.Description)" Required="true" Lines="4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        <MudTextField @bind-Value="Input.Description" Label="Description" Variant="Variant.Outlined" For="@(() => Input.Description)" Required="true" Lines="4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
 
-        <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="_jobAd.Type" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+        <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
+
+        <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
             @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
             {
                 <MudSelectItem Value="@type">@type</MudSelectItem>
             }
         </MudSelect>
 
-        <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="_jobAd.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+        <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
             @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
             {
                 <MudSelectItem Value="@mode">@mode</MudSelectItem>
             }
         </MudSelect>
 
-        <MudTextField @bind-Value="_jobAd.Location" Label="Location" Variant="Variant.Outlined" For="@(() => _jobAd.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
+        <MudTextField @bind-Value="Input.Location" Label="Location" Variant="Variant.Outlined" For="@(() => Input.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
 
-        <MudTextField @bind-Value="_jobAd.Salary" Label="Salary" Variant="Variant.Outlined" For="@(() => _jobAd.Salary)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+        <MudGrid>
+            <MudItem xs="6">
+                <MudTextField @bind-Value="Input.SalaryMin" Label="Minimum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMin)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            </MudItem>
+        </MudGrid>
 
-        <MudTextField @bind-Value="_jobAd.Requirements" Variant="Variant.Outlined" Label="Requirements" For="@(() => _jobAd.Requirements)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        <MudTextField @bind-Value="Input.Requirements" Variant="Variant.Outlined" Label="Requirements" For="@(() => Input.Requirements)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
         
-        <MudTextField @bind-Value="_jobAd.Responsibilities" Variant="Variant.Outlined" Label="Responsibilities" For="@(() => _jobAd.Responsibilities)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        <MudTextField @bind-Value="Input.Responsibilities" Variant="Variant.Outlined" Label="Responsibilities" For="@(() => Input.Responsibilities)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
         
-        <MudTextField @bind-Value="_jobAd.Offer" Variant="Variant.Outlined" Label="Offer Details" For="@(() => _jobAd.Offer)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        <MudTextField @bind-Value="Input.Offer" Variant="Variant.Outlined" Label="Offer Details" For="@(() => Input.Offer)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
         
-        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
+        <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
     </MudForm>
 </MudPaper>
 
 @code {
     private MudForm? _form;
-    private JobAd _jobAd = new();
+    private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
 
-    private async Task Submit()
+    private async Task OnValidSubmitAsync()
     {
         await _form!.Validate();
         if (_isValid)
         {
-            // handle save logic here
-            await DialogService.ShowMessageBox("Success", "Job Ad submitted successfully!");
+            try
+            {
+                var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+                var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+
+                EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
+
+                var newJobAd = new JobAd
+                {
+                    Id = Guid.NewGuid(),
+                    Title = Input.Title,
+                    Description = Input.Description,
+                    WorkType = Input.WorkType,
+                    WorkMode = Input.WorkMode,
+                    Location = Input.Location,
+                    SalaryMin = Input.SalaryMin,
+                    SalaryMax = Input.SalaryMax,
+                    Requirements = Input.Requirements,
+                    Responsibilities = Input.Responsibilities,
+                    Offer = Input.Offer,
+                    PublishDate = DateTime.UtcNow,
+                    ExpirationDate = Input.ExpirationDate,
+                    EmployerProfileId = employerProfile!.Id,
+                    EmployerProfile = employerProfile
+
+                };
+
+                Snackbar.Add("Your Job Ad has been created successfully.", MudBlazor.Severity.Success);
+                NavigationManager.NavigateTo("/");
+            } 
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
+            }
+
         }
+    }
+
+    private sealed class JobAdModel
+    {
+        [Required(ErrorMessage = "Job Ad Title is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Title must be between 3 and 50 characters.")]
+        public string Title { get; set; }
+        
+        [Required(ErrorMessage = "Job Ad Description is required")]
+        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Description must be between 10 and 1000 characters.")]
+        public string Description { get; set; }
+
+        public WorkType WorkType { get; set; }
+
+        public WorkMode WorkMode { get; set; }
+        
+        [Required(ErrorMessage = "Location is required")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Location must be between 3 and 50 characters.")]
+        public string Location { get; set; }
+        
+        [Required(ErrorMessage = "Minimum Salary is required")]
+        public decimal SalaryMin { get; set; }
+
+        [Required(ErrorMessage = "Maximum Salary is required")]
+        [GreaterThan("SalaryMin", ErrorMessage = "Maximum Salary must be greater than Minimum Salary.")]
+        public decimal SalaryMax { get; set; }
+        
+        [Required(ErrorMessage = "Requirements are required")]
+        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 1000 characters.")]
+        public string Requirements { get; set; }
+        
+        [Required(ErrorMessage = "Responsibilities are required")]
+        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
+        public string Responsibilities { get; set; }
+        
+        [Required(ErrorMessage = "Offer details are required")]
+        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Offer must be between 10 and 1000 characters.")]
+        public string Offer { get; set; }
+        
+        public DateTime? ExpirationDate { get; set; }
     }
 }
