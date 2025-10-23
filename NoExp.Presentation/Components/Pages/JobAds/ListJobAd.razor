@@ -1,0 +1,62 @@
+﻿@using NoExp.Domain.Entities
+@using NoExp.Domain.Enums.JobAd
+
+<MudDataGrid T="JobAd" Items="@jobAds" Hover="true" Striped="true" Bordered="true" Dense="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Title" Title="Title" />
+        <PropertyColumn Property="x => x.Location" Title="Location" />
+        <PropertyColumn Property="x => x.WorkType" Title="Work Type" />
+        <PropertyColumn Property="x => x.WorkMode" Title="Work Mode" />
+        <PropertyColumn Property="x => x.SalaryMin" Title="Min Salary" />
+        <PropertyColumn Property="x => x.SalaryMax" Title="Max Salary" />
+        <PropertyColumn Property="x => x.ExpirationDate" Title="Expiration Date" />
+        <PropertyColumn Property="x => x.WorkStatus" Title="Status" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<JobAd> jobAds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+            jobAds = new List<JobAd>
+        {
+            new JobAd
+            {
+                Id = Guid.NewGuid(),
+                Title = "Senior .NET Developer",
+                Description = "Looking for an experienced .NET developer to join our team.",
+                WorkType = WorkType.FullTime,
+                Location = "Warsaw",
+                WorkMode = WorkMode.Hybrid,
+                SalaryMin = 8000,
+                SalaryMax = 12000,
+                Requirements = "5+ years with C#, ASP.NET Core, Blazor experience",
+                Responsibilities = "Develop and maintain web applications",
+                Offer = "Flexible working hours, remote options, health insurance",
+                PublishDate = DateTime.UtcNow.AddDays(-7),
+                ExpirationDate = DateTime.UtcNow.AddMonths(1),
+                WorkStatus = WorkStatus.Active,
+                EmployerProfileId = "employer-123"
+            },
+            new JobAd
+            {
+                Id = Guid.NewGuid(),
+                Title = "Junior Frontend Developer",
+                Description = "Join our frontend team to work with Blazor and MudBlazor components.",
+                WorkType = WorkType.PartTime,
+                Location = "Krakow",
+                WorkMode = WorkMode.Remote,
+                SalaryMin = 3000,
+                SalaryMax = 5000,
+                Requirements = "Basic knowledge of Blazor and C#",
+                Responsibilities = "Implement UI components and fix bugs",
+                Offer = "Remote work, mentorship program",
+                PublishDate = DateTime.UtcNow.AddDays(-3),
+                ExpirationDate = DateTime.UtcNow.AddMonths(2),
+                WorkStatus = WorkStatus.Active,
+                EmployerProfileId = "employer-456"
+            }
+        };
+    }
+}
