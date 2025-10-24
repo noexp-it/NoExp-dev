@@ -1,18 +1,34 @@
 ﻿@using NoExp.Domain.Entities
 @using NoExp.Domain.Enums.JobAd
 
-<MudDataGrid T="JobAd" Items="@jobAds" Hover="true" Striped="true" Bordered="true" Dense="true">
-    <Columns>
-        <PropertyColumn Property="x => x.Title" Title="Title" />
-        <PropertyColumn Property="x => x.Location" Title="Location" />
-        <PropertyColumn Property="x => x.WorkType" Title="Work Type" />
-        <PropertyColumn Property="x => x.WorkMode" Title="Work Mode" />
-        <PropertyColumn Property="x => x.SalaryMin" Title="Min Salary" />
-        <PropertyColumn Property="x => x.SalaryMax" Title="Max Salary" />
-        <PropertyColumn Property="x => x.ExpirationDate" Title="Expiration Date" />
-        <PropertyColumn Property="x => x.WorkStatus" Title="Status" />
-    </Columns>
-</MudDataGrid>
+@foreach (var jobAd in jobAds)
+{
+    <MudCard class="m-3">
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="1">
+                    <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg" />
+                </MudItem>
+                <MudItem xs="12" sm="11">
+                    <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
+                    <MudText Align="Align.Center">@jobAd.Description</MudText>
+                    <MudItem Class="d-flex justify-content-center">
+                        @foreach (var requirement in jobAd.Requirements)
+                        {
+                            <MudChip T="string" Label="true" Color="Color.Info">@requirement</MudChip>
+                        }
+                    </MudItem>
+                </MudItem>
+            </MudGrid>
+            <MudCardActions Class="d-flex justify-content-end">
+                <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+                <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                <MudButton>Apply Now!</MudButton>
+            </MudCardActions>
+        </MudCardContent>
+    </MudCard>
+
+}
 
 @code {
     private List<JobAd> jobAds = new();
@@ -31,9 +47,9 @@
                 WorkMode = WorkMode.Hybrid,
                 SalaryMin = 8000,
                 SalaryMax = 12000,
-                Requirements = "5+ years with C#, ASP.NET Core, Blazor experience",
-                Responsibilities = "Develop and maintain web applications",
-                Offer = "Flexible working hours, remote options, health insurance",
+                Requirements = ["5+ years with C#", "ASP.NET Core", "Blazor experience"],
+                Responsibilities = ["Develop and maintain web applications"],
+                Offer = ["Flexible working hours", "Remote options", "health insurance"],
                 PublishDate = DateTime.UtcNow.AddDays(-7),
                 ExpirationDate = DateTime.UtcNow.AddMonths(1),
                 WorkStatus = WorkStatus.Active,
@@ -49,9 +65,9 @@
                 WorkMode = WorkMode.Remote,
                 SalaryMin = 3000,
                 SalaryMax = 5000,
-                Requirements = "Basic knowledge of Blazor and C#",
-                Responsibilities = "Implement UI components and fix bugs",
-                Offer = "Remote work, mentorship program",
+                Requirements = ["Basic knowledge of Blazor and C#"],
+                Responsibilities = ["Implement UI components and fix bugs"],
+                Offer = ["Remote work, mentorship program"],
                 PublishDate = DateTime.UtcNow.AddDays(-3),
                 ExpirationDate = DateTime.UtcNow.AddMonths(2),
                 WorkStatus = WorkStatus.Active,

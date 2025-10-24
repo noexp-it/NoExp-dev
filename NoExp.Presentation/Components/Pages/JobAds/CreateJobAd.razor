@@ -1,4 +1,5 @@
 ﻿@page "/JobAds/Create"
+@rendermode InteractiveServer
 
 @using System.ComponentModel.DataAnnotations
 @using NoExp.Application.Interfaces
@@ -48,7 +49,28 @@
             </MudItem>
         </MudGrid>
 
-        <MudTextField @bind-Value="Input.Requirements" Variant="Variant.Outlined" Label="Requirements" For="@(() => Input.Requirements)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
+        <MudChipSet T="string">
+        @foreach (var requirement in AddedRequirements)
+        {
+            <MudChip 
+                Text="@requirement" 
+                OnClose="@((MudChip<string> chip) => RemoveItem(requirement))" 
+                Closeable="true" 
+                Color="Color.Info" 
+                Variant="Variant.Outlined" />
+        }
+        </MudChipSet>
+
+        <MudTextField @bind-Value="Input.Requirements"
+                      Label="Add Requirement"
+                      Placeholder="Type and press Enter"
+                      OnKeyDown="HandleKeyDown"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Add"
+                      AdornmentColor="Color.Primary"
+                      Immediate="true" 
+                      Variant="Variant.Outlined"
+                      TextUpdateSuppression=false/>
         
         <MudTextField @bind-Value="Input.Responsibilities" Variant="Variant.Outlined" Label="Responsibilities" For="@(() => Input.Responsibilities)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
         
@@ -62,6 +84,7 @@
     private MudForm? _form;
     private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
+    private List<string> AddedRequirements { get; set; } = new();
 
     private async Task OnValidSubmitAsync()
     {
@@ -85,9 +108,10 @@
                     Location = Input.Location,
                     SalaryMin = Input.SalaryMin,
                     SalaryMax = Input.SalaryMax,
-                    Requirements = Input.Requirements,
-                    Responsibilities = Input.Responsibilities,
-                    Offer = Input.Offer,
+                    // TODO: Przerobić na listy stringów
+                    Requirements = AddedRequirements,
+                    // Responsibilities = Input.Responsibilities,
+                    // Offer = Input.Offer,
                     PublishDate = DateTime.UtcNow,
                     ExpirationDate = Input.ExpirationDate,
                     EmployerProfileId = employerProfile!.Id,
@@ -106,12 +130,33 @@
         }
     }
 
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.Requirements))
+        {
+            if (!AddedRequirements.Contains(Input.Requirements))
+            {
+                AddedRequirements.Add(Input.Requirements.Trim());
+            }
+
+            await Task.Delay(10);
+            Input.Requirements = string.Empty;
+            StateHasChanged();
+
+        }
+    }
+
+    private void RemoveItem(string item)
+    {
+        AddedRequirements.Remove(item);
+    }
+
     private sealed class JobAdModel
     {
         [Required(ErrorMessage = "Job Ad Title is required")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Title must be between 3 and 50 characters.")]
         public string Title { get; set; }
-        
+
         [Required(ErrorMessage = "Job Ad Description is required")]
         [StringLength(1000, MinimumLength = 10, ErrorMessage = "Description must be between 10 and 1000 characters.")]
         public string Description { get; set; }
@@ -119,22 +164,22 @@
         public WorkType WorkType { get; set; }
 
         public WorkMode WorkMode { get; set; }
-        
+
         [Required(ErrorMessage = "Location is required")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "Location must be between 3 and 50 characters.")]
         public string Location { get; set; }
-        
+
         [Required(ErrorMessage = "Minimum Salary is required")]
         public decimal SalaryMin { get; set; }
 
         [Required(ErrorMessage = "Maximum Salary is required")]
         [GreaterThan("SalaryMin", ErrorMessage = "Maximum Salary must be greater than Minimum Salary.")]
         public decimal SalaryMax { get; set; }
-        
+
         [Required(ErrorMessage = "Requirements are required")]
         [StringLength(1000, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 1000 characters.")]
         public string Requirements { get; set; }
-        
+
         [Required(ErrorMessage = "Responsibilities are required")]
         [StringLength(1000, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
         public string Responsibilities { get; set; }

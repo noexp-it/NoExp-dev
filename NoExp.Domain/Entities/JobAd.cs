@@ -29,13 +29,12 @@ public class JobAd
     public decimal? SalaryMax { get; set; }
 
     [Required]
-    public string Requirements { get; set; } = string.Empty;
+    public List<string> Requirements { get; set; } = [];
 
     [Required]
-    public string Responsibilities { get; set; } = string.Empty;
-
+    public List<string> Responsibilities { get; set; } = [];
     [Required]
-    public string Offer { get; set; } = string.Empty;
+    public List<string> Offer { get; set; } = [];
 
     public DateTime PublishDate { get; set; } = DateTime.UtcNow;
     public DateTime? ExpirationDate { get; set; }
