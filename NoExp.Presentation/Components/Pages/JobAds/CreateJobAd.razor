@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @using System.ComponentModel.DataAnnotations
+@using MudExRichTextEditor.Types
 @using NoExp.Application.Interfaces
 @using NoExp.Application.Services
 @using NoExp.Domain.Entities
@@ -19,8 +20,21 @@
     <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid">
 
         <MudTextField @bind-Value="Input.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => Input.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
+       
+        <MudCard>
+            <MudCardContent>
+                <MudText>Description</MudText>
+                <MudExRichTextEdit @ref="@Editor"
+                                   ReadOnly="false"
+                                   Tools="CustomTools.ToArray()"
+                                   Class="m-2 mh-100"
+                                   Placeholder="Description"
+                                   EnableResize="true"
+                                   @bind-Value="Input.Description">
+                </MudExRichTextEdit>
+            </MudCardContent>
+        </MudCard>
         
-        <MudTextField @bind-Value="Input.Description" Label="Description" Variant="Variant.Outlined" For="@(() => Input.Description)" Required="true" Lines="4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
 
         <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
 
@@ -85,6 +99,7 @@
     private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
     private List<string> AddedRequirements { get; set; } = new();
+    MudExRichTextEdit Editor;
 
     private async Task OnValidSubmitAsync()
     {
@@ -150,6 +165,19 @@
     {
         AddedRequirements.Remove(item);
     }
+
+    private List<MudExRichTextEditor.Types.QuillTool> CustomTools = new List<QuillTool>
+{
+   new QuillTool(cls: "ql-header", group: 1, options: new string[] { "", "1", "2", "3", "4", "5", "6" }),
+    new QuillTool(cls: "ql-bold", group: 2),
+    new QuillTool(cls: "ql-italic", group: 2),
+    new QuillTool(cls: "ql-underline", group: 2),
+    new QuillTool(cls: "ql-list", group: 4, value: "ordered"),
+    new QuillTool(cls: "ql-list", group: 4, value: "bullet"),
+    new QuillTool(cls: "ql-align", group: 4, options: new string[] { "", "center", "right", "justify" }),
+    new QuillTool(cls: "ql-color", group: 3, options: Array.Empty<string>()),
+    new QuillTool(cls: "ql-blockquote", group: 5)
+};
 
     private sealed class JobAdModel
     {
