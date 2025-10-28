@@ -23,7 +23,7 @@
        
         <MudCard>
             <MudCardContent>
-                <MudText>Description</MudText>
+                <MudText Typo="Typo.h6">Description</MudText>
                 <MudExRichTextEdit @ref="@Editor"
                                    ReadOnly="false"
                                    Tools="CustomTools.ToArray()"
@@ -38,19 +38,24 @@
 
         <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
 
-        <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
-            @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
-            {
-                <MudSelectItem Value="@type">@type</MudSelectItem>
-            }
-        </MudSelect>
-
-        <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
-            @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
-            {
-                <MudSelectItem Value="@mode">@mode</MudSelectItem>
-            }
-        </MudSelect>
+        <MudGrid>
+             <MudItem xs="6">
+                <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                    @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
+                    {
+                        <MudSelectItem Value="@type">@type</MudSelectItem>
+                    }
+                </MudSelect>
+             </MudItem>
+             <MudItem xs="6">
+                <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                    @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
+                    {
+                        <MudSelectItem Value="@mode">@mode</MudSelectItem>
+                    }
+                </MudSelect>
+             </MudItem>
+        </MudGrid>
 
         <MudTextField @bind-Value="Input.Location" Label="Location" Variant="Variant.Outlined" For="@(() => Input.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
 
@@ -61,35 +66,85 @@
             <MudItem xs="6">
                 <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
             </MudItem>
-        </MudGrid>
+        </MudGrid>  
+    
+        <MudCard class="mb-1">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Responsibilities</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudChipSet T="string">
+                    @foreach (var responsibility in AddedResponsibilities)
+                    {
+                        <MudChip Text="@responsibility"
+                                 OnClose="@((MudChip<string> chip) => RemoveItem(AddedResponsibilities, responsibility))"
+                                 Closeable="true"
+                                 Color="Color.Success"
+                                 Variant="Variant.Outlined" />
+                    }
+                </MudChipSet>
+            </MudCardContent>
+            <MudCardActions>
+                <MudTextField @bind-Value="Input.Responsibilities"
+                              Placeholder="Type and press Enter"
+                              OnKeyDown="ResponsibilitiesHandleKeyDown"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.Add"
+                              AdornmentColor="Color.Primary"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              TextUpdateSuppression=false />
+            </MudCardActions>
+        </MudCard>
+        
+        <MudCard Class="mb-1">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Requirements</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudChipSet T="string">
+                    @foreach (var requirements in AddedRequirements)
+                    {
+                        <MudChip Text="@requirements"
+                                 OnClose="@((MudChip<string> chip) => RemoveItem(AddedRequirements, requirements))"
+                                 Closeable="true"
+                                 Color="Color.Success"
+                                 Variant="Variant.Outlined" />
+                    }
+                </MudChipSet>
+            </MudCardContent>
+            <MudCardActions>
+                <MudTextField @bind-Value="Input.Requirements"
+                              Placeholder="Type and press Enter"
+                              OnKeyDown="RequirementsHandleKeyDown"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.Add"
+                              AdornmentColor="Color.Primary"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              TextUpdateSuppression=false />
+            </MudCardActions>
+        </MudCard>
 
-        <MudChipSet T="string">
-        @foreach (var requirement in AddedRequirements)
-        {
-            <MudChip 
-                Text="@requirement" 
-                OnClose="@((MudChip<string> chip) => RemoveItem(requirement))" 
-                Closeable="true" 
-                Color="Color.Info" 
-                Variant="Variant.Outlined" />
-        }
-        </MudChipSet>
+        <MudCard class="mb-3">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Offer details</MudText>
+                <MudExRichTextEdit @ref="@Editor"
+                                   ReadOnly="false"
+                                   Tools="CustomTools.ToArray()"
+                                   Class="m-2 mh-100"
+                                   Placeholder="Offer details"
+                                   EnableResize="true"
+                                   @bind-Value="Input.Offer">
+                </MudExRichTextEdit>
+            </MudCardContent>
+        </MudCard>
 
-        <MudTextField @bind-Value="Input.Requirements"
-                      Label="Add Requirement"
-                      Placeholder="Type and press Enter"
-                      OnKeyDown="HandleKeyDown"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Material.Filled.Add"
-                      AdornmentColor="Color.Primary"
-                      Immediate="true" 
-                      Variant="Variant.Outlined"
-                      TextUpdateSuppression=false/>
-        
-        <MudTextField @bind-Value="Input.Responsibilities" Variant="Variant.Outlined" Label="Responsibilities" For="@(() => Input.Responsibilities)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
-        
-        <MudTextField @bind-Value="Input.Offer" Variant="Variant.Outlined" Label="Offer Details" For="@(() => Input.Offer)" Required="true" Lines="3" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description"/>
-        
+
         <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
     </MudForm>
 </MudPaper>
@@ -99,7 +154,9 @@
     private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
     private List<string> AddedRequirements { get; set; } = new();
+    private List<string> AddedResponsibilities { get; set; } = new();
     MudExRichTextEdit Editor;
+
 
     private async Task OnValidSubmitAsync()
     {
@@ -113,6 +170,8 @@
 
                 EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
 
+                Console.WriteLine(Input.Description);
+
                 var newJobAd = new JobAd
                 {
                     Id = Guid.NewGuid(),
@@ -125,8 +184,8 @@
                     SalaryMax = Input.SalaryMax,
                     // TODO: Przerobić na listy stringów
                     Requirements = AddedRequirements,
-                    // Responsibilities = Input.Responsibilities,
-                    // Offer = Input.Offer,
+                    Responsibilities = AddedResponsibilities,
+                    Offer = Input.Offer,
                     PublishDate = DateTime.UtcNow,
                     ExpirationDate = Input.ExpirationDate,
                     EmployerProfileId = employerProfile!.Id,
@@ -145,7 +204,7 @@
         }
     }
 
-    private async Task HandleKeyDown(KeyboardEventArgs e)
+    private async Task RequirementsHandleKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.Requirements))
         {
@@ -153,6 +212,12 @@
             {
                 AddedRequirements.Add(Input.Requirements.Trim());
             }
+            else
+            {
+                Snackbar.Add(new MarkupString($"{Input.Requirements} requirement exists!"), MudBlazor.Severity.Error);
+            }
+
+            
 
             await Task.Delay(10);
             Input.Requirements = string.Empty;
@@ -161,14 +226,34 @@
         }
     }
 
-    private void RemoveItem(string item)
+    private async Task ResponsibilitiesHandleKeyDown(KeyboardEventArgs e)
     {
-        AddedRequirements.Remove(item);
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.Responsibilities))
+        {
+            if (!AddedResponsibilities.Contains(Input.Responsibilities))
+            {
+                AddedResponsibilities.Add(Input.Responsibilities.Trim());
+            }
+            else
+            {
+                Snackbar.Add(new MarkupString($"{Input.Responsibilities} responsibility exists!"), MudBlazor.Severity.Error);
+            }
+
+            await Task.Delay(10);
+            Input.Responsibilities = string.Empty;
+            StateHasChanged();
+
+        }
+    }
+
+    private void RemoveItem(List<string> chipList, string item)
+    {
+        chipList.Remove(item);
     }
 
     private List<MudExRichTextEditor.Types.QuillTool> CustomTools = new List<QuillTool>
 {
-   new QuillTool(cls: "ql-header", group: 1, options: new string[] { "", "1", "2", "3", "4", "5", "6" }),
+    new QuillTool(cls: "ql-header", group: 1, options: new string[] { "", "1", "2", "3", "4", "5", "6" }),
     new QuillTool(cls: "ql-bold", group: 2),
     new QuillTool(cls: "ql-italic", group: 2),
     new QuillTool(cls: "ql-underline", group: 2),

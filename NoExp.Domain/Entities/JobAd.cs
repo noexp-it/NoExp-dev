@@ -33,14 +33,17 @@ public class JobAd
 
     [Required]
     public List<string> Responsibilities { get; set; } = [];
+
     [Required]
-    public List<string> Offer { get; set; } = [];
+    public string Offer { get; set; } = string.Empty;
 
     public DateTime PublishDate { get; set; } = DateTime.UtcNow;
+
     public DateTime? ExpirationDate { get; set; }
 
     public WorkStatus WorkStatus { get; set; } = WorkStatus.Inactive;
     
     public string EmployerProfileId { get; set; }
+
     public virtual EmployerProfile EmployerProfile { get; set; }
 }
