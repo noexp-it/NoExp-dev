@@ -21,9 +21,9 @@ namespace NoExp.Infrastructure.Repositories
             return userProfile;
         }
 
-        public async Task<EmployerProfile> GetEmployerProfileByUserIdAsync(string userId)
+        public async Task<EmployerProfile?> GetEmployerProfileByUserIdAsync(string userId)
         {
-            return await context.EmployerProfiles.FirstOrDefaultAsync(p => p.UserId == userId)!;
+            return await context.EmployerProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
         public async Task<CandidateProfile> GetCandidateProfileByUserIdAsync(string userId)

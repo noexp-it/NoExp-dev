@@ -50,6 +50,8 @@ namespace NoExp.Presentation
 
             builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
             builder.Services.AddTransient<IProfileService, ProfileService>();
+            builder.Services.AddTransient<IJobAdRepository, JobAdRepository>();
+            builder.Services.AddTransient<IJobAdService, JobAdService>();
 
             var app = builder.Build();
 

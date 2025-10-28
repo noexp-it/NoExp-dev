@@ -37,7 +37,7 @@ public class JobAd
     [Required]
     public string Offer { get; set; } = string.Empty;
 
-    public DateTime PublishDate { get; set; } = DateTime.UtcNow;
+    public DateTime PublishDate { get; set; } = DateTime.UtcNow.ToUniversalTime();
 
     public DateTime? ExpirationDate { get; set; }
 

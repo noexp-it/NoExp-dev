@@ -1,7 +1,9 @@
 ﻿@page "/JobAds/Create"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
 @using MudExRichTextEditor.Types
 @using NoExp.Application.Interfaces
 @using NoExp.Application.Services
@@ -13,6 +15,7 @@
 @inject IDialogService DialogService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IProfileService ProfileService
+@inject IJobAdService JobAdService
 @inject MudBlazor.ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
@@ -170,7 +173,11 @@
 
                 EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
 
-                Console.WriteLine(Input.Description);
+                if (employerProfile == null)
+                {
+                    Snackbar.Add("Employer profile not found. Please create an employer profile first.", MudBlazor.Severity.Error);
+                    return;
+                }
 
                 var newJobAd = new JobAd
                 {
@@ -182,7 +189,6 @@
                     Location = Input.Location,
                     SalaryMin = Input.SalaryMin,
                     SalaryMax = Input.SalaryMax,
-                    // TODO: Przerobić na listy stringów
                     Requirements = AddedRequirements,
                     Responsibilities = AddedResponsibilities,
                     Offer = Input.Offer,
@@ -193,6 +199,7 @@
 
                 };
 
+                await JobAdService.SaveJobAdAsync(newJobAd);
                 Snackbar.Add("Your Job Ad has been created successfully.", MudBlazor.Severity.Success);
                 NavigationManager.NavigateTo("/");
             } 

@@ -2,17 +2,23 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NoExp.Domain.Entities;
 using NoExp.Domain.Entities.Abstracts;
+using System.Reflection.Emit;
+using System.Xml;
 
 namespace NoExp.Infrastructure.Persistence
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
+        static ApplicationDbContext()
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
+
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<CandidateProfile> CandidateProfiles { get; set; }
         public DbSet<EmployerProfile> EmployerProfiles { get; set; }
         
         public DbSet<JobAd> JobAds { get; set; }
-
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
@@ -52,6 +58,11 @@ namespace NoExp.Infrastructure.Persistence
                 .HasForeignKey(e => e.EmployerProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<JobAd>()
+                .Property(e => e.PublishDate)
+                .HasConversion(
+                    v => v.ToUniversalTime(),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         }
     }
 }

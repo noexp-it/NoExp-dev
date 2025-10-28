@@ -19,7 +19,7 @@ namespace NoExp.Application.Services
             return await profileRepository.AddProfileAsync(userProfile);
         }
 
-        public async Task<EmployerProfile> GetEmployerProfileByUserIdAsync(string userId)
+        public async Task<EmployerProfile?> GetEmployerProfileByUserIdAsync(string userId)
         {
             return await profileRepository.GetEmployerProfileByUserIdAsync(userId);
         }
