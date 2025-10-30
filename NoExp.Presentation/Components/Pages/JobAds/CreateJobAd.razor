@@ -24,7 +24,7 @@
 
         <MudTextField @bind-Value="Input.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => Input.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
        
-        <MudCard>
+        <MudCard class="mb-3">
             <MudCardContent>
                 <MudText Typo="Typo.h6">Description</MudText>
                 <MudExRichTextEdit @ref="@Editor"
@@ -38,6 +38,19 @@
             </MudCardContent>
         </MudCard>
         
+        <MudCard class="mb-3">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Offer details</MudText>
+                <MudExRichTextEdit @ref="@Editor"
+                                   ReadOnly="false"
+                                   Tools="CustomTools.ToArray()"
+                                   Class="m-2 mh-100"
+                                   Placeholder="Offer details"
+                                   EnableResize="true"
+                                   @bind-Value="Input.Offer">
+                </MudExRichTextEdit>
+            </MudCardContent>
+        </MudCard>
 
         <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
 
@@ -69,7 +82,38 @@
             <MudItem xs="6">
                 <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
             </MudItem>
-        </MudGrid>  
+        </MudGrid>
+        
+        <MudCard Class="mb-1">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Tech Stack</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudChipSet T="string" Style="max-height: 15vh; overflow-y: auto">
+                    @foreach (var skill in AddedTechStack)
+                    {
+                        <MudChip Text="@skill"
+                                 OnClose="@((MudChip<string> chip) => RemoveItem(AddedTechStack, skill))"
+                                 Closeable="true"
+                                 Color="Color.Success"
+                                 Variant="Variant.Outlined" />
+                    }
+                </MudChipSet>
+            </MudCardContent>
+            <MudCardActions>
+                <MudTextField @bind-Value="Input.TechStack"
+                              Placeholder="Type and press Enter"
+                              OnKeyDown="TechStackHandleKeyDown"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.Add"
+                              AdornmentColor="Color.Primary"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              TextUpdateSuppression=false />
+            </MudCardActions>
+        </MudCard>
     
         <MudCard class="mb-1">
             <MudCardHeader>
@@ -78,16 +122,14 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudChipSet T="string">
+                
+                <MudList T="string" Style="max-height: 15vh; overflow-y: auto">
                     @foreach (var responsibility in AddedResponsibilities)
                     {
-                        <MudChip Text="@responsibility"
-                                 OnClose="@((MudChip<string> chip) => RemoveItem(AddedResponsibilities, responsibility))"
-                                 Closeable="true"
-                                 Color="Color.Success"
-                                 Variant="Variant.Outlined" />
+                        <MudListItem Icon="@Icons.Material.Filled.Delete" IconColor="Color.Error" OnClick="@(() => RemoveItem(AddedResponsibilities, responsibility))">@responsibility</MudListItem>
                     }
-                </MudChipSet>
+                </MudList>
+
             </MudCardContent>
             <MudCardActions>
                 <MudTextField @bind-Value="Input.Responsibilities"
@@ -109,16 +151,14 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudChipSet T="string">
-                    @foreach (var requirements in AddedRequirements)
+                
+                <MudList T="string" Style="max-height: 15vh; overflow-y: auto">
+                    @foreach (var requirement in AddedRequirements)
                     {
-                        <MudChip Text="@requirements"
-                                 OnClose="@((MudChip<string> chip) => RemoveItem(AddedRequirements, requirements))"
-                                 Closeable="true"
-                                 Color="Color.Success"
-                                 Variant="Variant.Outlined" />
+                        <MudListItem Icon="@Icons.Material.Filled.Delete" IconColor="Color.Error" OnClick="@(() => RemoveItem(AddedRequirements, requirement))">@requirement</MudListItem>
                     }
-                </MudChipSet>
+                </MudList>
+
             </MudCardContent>
             <MudCardActions>
                 <MudTextField @bind-Value="Input.Requirements"
@@ -133,21 +173,6 @@
             </MudCardActions>
         </MudCard>
 
-        <MudCard class="mb-3">
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Offer details</MudText>
-                <MudExRichTextEdit @ref="@Editor"
-                                   ReadOnly="false"
-                                   Tools="CustomTools.ToArray()"
-                                   Class="m-2 mh-100"
-                                   Placeholder="Offer details"
-                                   EnableResize="true"
-                                   @bind-Value="Input.Offer">
-                </MudExRichTextEdit>
-            </MudCardContent>
-        </MudCard>
-
-
         <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
     </MudForm>
 </MudPaper>
@@ -158,6 +183,7 @@
     private bool _isValid = false;
     private List<string> AddedRequirements { get; set; } = new();
     private List<string> AddedResponsibilities { get; set; } = new();
+    private List<string> AddedTechStack { get; set; } = new();
     MudExRichTextEdit Editor;
 
 
@@ -224,7 +250,7 @@
                 Snackbar.Add(new MarkupString($"{Input.Requirements} requirement exists!"), MudBlazor.Severity.Error);
             }
 
-            
+
 
             await Task.Delay(10);
             Input.Requirements = string.Empty;
@@ -253,9 +279,29 @@
         }
     }
 
-    private void RemoveItem(List<string> chipList, string item)
+    private async Task TechStackHandleKeyDown(KeyboardEventArgs e)
     {
-        chipList.Remove(item);
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.TechStack))
+        {
+            if (!AddedTechStack.Contains(Input.TechStack))
+            {
+                AddedTechStack.Add(Input.TechStack.Trim());
+            }
+            else
+            {
+                Snackbar.Add(new MarkupString($"{Input.TechStack} skill exists!"), MudBlazor.Severity.Error);
+            }
+
+            await Task.Delay(10);
+            Input.TechStack = string.Empty;
+            StateHasChanged();
+
+        }
+    }
+
+    private void RemoveItem(List<string> list, string item)
+    {
+        list.Remove(item);
     }
 
     private List<MudExRichTextEditor.Types.QuillTool> CustomTools = new List<QuillTool>
@@ -296,12 +342,15 @@
         [GreaterThan("SalaryMin", ErrorMessage = "Maximum Salary must be greater than Minimum Salary.")]
         public decimal SalaryMax { get; set; }
 
+        [Required(ErrorMessage = "Tech Stack is required")]
+        public string TechStack { get; set;  }
+
         [Required(ErrorMessage = "Requirements are required")]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 1000 characters.")]
+        [StringLength(100, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 1000 characters.")]
         public string Requirements { get; set; }
 
         [Required(ErrorMessage = "Responsibilities are required")]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
+        [StringLength(100, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
         public string Responsibilities { get; set; }
         
         [Required(ErrorMessage = "Offer details are required")]
