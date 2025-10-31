@@ -37,53 +37,7 @@
                 </MudExRichTextEdit>
             </MudCardContent>
         </MudCard>
-        
-        <MudCard class="mb-3">
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Offer details</MudText>
-                <MudExRichTextEdit @ref="@Editor"
-                                   ReadOnly="false"
-                                   Tools="CustomTools.ToArray()"
-                                   Class="m-2 mh-100"
-                                   Placeholder="Offer details"
-                                   EnableResize="true"
-                                   @bind-Value="Input.Offer">
-                </MudExRichTextEdit>
-            </MudCardContent>
-        </MudCard>
 
-        <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
-
-        <MudGrid>
-             <MudItem xs="6">
-                <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
-                    @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
-                    {
-                        <MudSelectItem Value="@type">@type</MudSelectItem>
-                    }
-                </MudSelect>
-             </MudItem>
-             <MudItem xs="6">
-                <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
-                    @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
-                    {
-                        <MudSelectItem Value="@mode">@mode</MudSelectItem>
-                    }
-                </MudSelect>
-             </MudItem>
-        </MudGrid>
-
-        <MudTextField @bind-Value="Input.Location" Label="Location" Variant="Variant.Outlined" For="@(() => Input.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
-
-        <MudGrid>
-            <MudItem xs="6">
-                <MudTextField @bind-Value="Input.SalaryMin" Label="Minimum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMin)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-            </MudItem>
-            <MudItem xs="6">
-                <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-            </MudItem>
-        </MudGrid>
-        
         <MudCard Class="mb-1">
             <MudCardHeader>
                 <CardHeaderContent>
@@ -114,64 +68,38 @@
                               TextUpdateSuppression=false />
             </MudCardActions>
         </MudCard>
-    
-        <MudCard class="mb-1">
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Responsibilities</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                
-                <MudList T="string" Style="max-height: 15vh; overflow-y: auto">
-                    @foreach (var responsibility in AddedResponsibilities)
-                    {
-                        <MudListItem Icon="@Icons.Material.Filled.Delete" IconColor="Color.Error" OnClick="@(() => RemoveItem(AddedResponsibilities, responsibility))">@responsibility</MudListItem>
-                    }
-                </MudList>
-
-            </MudCardContent>
-            <MudCardActions>
-                <MudTextField @bind-Value="Input.Responsibilities"
-                              Placeholder="Type and press Enter"
-                              OnKeyDown="ResponsibilitiesHandleKeyDown"
-                              Adornment="Adornment.End"
-                              AdornmentIcon="@Icons.Material.Filled.Add"
-                              AdornmentColor="Color.Primary"
-                              Immediate="true"
-                              Variant="Variant.Outlined"
-                              TextUpdateSuppression=false />
-            </MudCardActions>
-        </MudCard>
         
-        <MudCard Class="mb-1">
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">Requirements</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                
-                <MudList T="string" Style="max-height: 15vh; overflow-y: auto">
-                    @foreach (var requirement in AddedRequirements)
-                    {
-                        <MudListItem Icon="@Icons.Material.Filled.Delete" IconColor="Color.Error" OnClick="@(() => RemoveItem(AddedRequirements, requirement))">@requirement</MudListItem>
-                    }
-                </MudList>
+        <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
 
-            </MudCardContent>
-            <MudCardActions>
-                <MudTextField @bind-Value="Input.Requirements"
-                              Placeholder="Type and press Enter"
-                              OnKeyDown="RequirementsHandleKeyDown"
-                              Adornment="Adornment.End"
-                              AdornmentIcon="@Icons.Material.Filled.Add"
-                              AdornmentColor="Color.Primary"
-                              Immediate="true"
-                              Variant="Variant.Outlined"
-                              TextUpdateSuppression=false />
-            </MudCardActions>
-        </MudCard>
+        <MudGrid>
+             <MudItem xs="6">
+                <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                    @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
+                    {
+                        <MudSelectItem Value="@type">@type</MudSelectItem>
+                    }
+                </MudSelect>
+             </MudItem>
+             <MudItem xs="6">
+                <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                    @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
+                    {
+                        <MudSelectItem Value="@mode">@mode</MudSelectItem>
+                    }
+                </MudSelect>
+             </MudItem>
+        </MudGrid>
+
+        <MudTextField @bind-Value="Input.Location" Label="Location" Variant="Variant.Outlined" For="@(() => Input.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
+
+        <MudGrid Class="mb-4">
+            <MudItem xs="6">
+                <MudTextField @bind-Value="Input.SalaryMin" Label="Minimum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMin)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            </MudItem>
+        </MudGrid>
 
         <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
     </MudForm>
@@ -215,9 +143,6 @@
                     Location = Input.Location,
                     SalaryMin = Input.SalaryMin,
                     SalaryMax = Input.SalaryMax,
-                    Requirements = AddedRequirements,
-                    Responsibilities = AddedResponsibilities,
-                    Offer = Input.Offer,
                     PublishDate = DateTime.UtcNow,
                     ExpirationDate = Input.ExpirationDate,
                     EmployerProfileId = employerProfile!.Id,
@@ -233,48 +158,6 @@
             {
                 Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
             }
-
-        }
-    }
-
-    private async Task RequirementsHandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.Requirements))
-        {
-            if (!AddedRequirements.Contains(Input.Requirements))
-            {
-                AddedRequirements.Add(Input.Requirements.Trim());
-            }
-            else
-            {
-                Snackbar.Add(new MarkupString($"{Input.Requirements} requirement exists!"), MudBlazor.Severity.Error);
-            }
-
-
-
-            await Task.Delay(10);
-            Input.Requirements = string.Empty;
-            StateHasChanged();
-
-        }
-    }
-
-    private async Task ResponsibilitiesHandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(Input.Responsibilities))
-        {
-            if (!AddedResponsibilities.Contains(Input.Responsibilities))
-            {
-                AddedResponsibilities.Add(Input.Responsibilities.Trim());
-            }
-            else
-            {
-                Snackbar.Add(new MarkupString($"{Input.Responsibilities} responsibility exists!"), MudBlazor.Severity.Error);
-            }
-
-            await Task.Delay(10);
-            Input.Responsibilities = string.Empty;
-            StateHasChanged();
 
         }
     }
