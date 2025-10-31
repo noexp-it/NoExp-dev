@@ -12,6 +12,7 @@
 @using NoExp.Infrastructure.Persistence
 
 @inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IEmailSender<ApplicationUser> EmailSender
@@ -103,11 +104,25 @@
                     Id = Guid.NewGuid().ToString(),
                     UserId = user.Id,
                 },
-            _ => throw new ArgumentException("Nieprawidłowy typ użytkownika")
+            _ => throw new ArgumentException("Invalid user type")
         };
 
         user.UserProfile = profile;
         await ProfileService.SaveProfileAsync(profile);
+
+        string roleName = Input.Profile switch
+        {
+            "Candidate" => "CandidateRole",
+            "Employer" => "EmployerRole",
+            _ => throw new ArgumentException("Invalid user type")
+        };
+
+        if (!await RoleManager.RoleExistsAsync(roleName))
+        {
+            await RoleManager.CreateAsync(new IdentityRole(roleName));
+        }
+
+        await UserManager.AddToRoleAsync(user, roleName);
 
         if (!result.Succeeded)
         {
