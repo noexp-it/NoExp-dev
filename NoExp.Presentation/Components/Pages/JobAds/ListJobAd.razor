@@ -15,9 +15,9 @@
                     <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
                     <MudText Align="Align.Center">@((MarkupString)@jobAd.Description)</MudText>
                     <MudItem Class="d-flex justify-content-center">
-                        @foreach (var requirement in jobAd.Requirements)
+                        @foreach (var skill in jobAd.TechStack)
                         {
-                            <MudChip T="string" Label="true" Color="Color.Info">@requirement</MudChip>
+                            <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
                         }
                     </MudItem>
                 </MudItem>
