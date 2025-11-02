@@ -22,7 +22,14 @@
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
     <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid">
 
-        <MudTextField @bind-Value="Input.Title" Label="Job Title" Variant="Variant.Outlined" For="@(() => Input.Title)" Required="true" MaxLength="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Title"/>
+        <MudTextField @bind-Value="Input.Title" 
+                        Label="Job Title" 
+                        Variant="Variant.Outlined" 
+                        For="@(() => Input.Title)"    
+                        MaxLength="50" 
+                        Adornment="Adornment.Start" 
+                        AdornmentIcon="@Icons.Material.Filled.Title"
+                        Validation="@(new Func<string, IEnumerable<string>>(TitleInputValidator))" Required="true"/>
        
         <MudCard class="mb-3">
             <MudCardContent>
@@ -235,11 +242,25 @@
         [Required(ErrorMessage = "Responsibilities are required")]
         [StringLength(100, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
         public string Responsibilities { get; set; }
-        
+
         [Required(ErrorMessage = "Offer details are required")]
         [StringLength(1000, MinimumLength = 10, ErrorMessage = "Offer must be between 10 and 1000 characters.")]
         public string Offer { get; set; }
-        
+
         public DateTime? ExpirationDate { get; set; }
+    }
+
+    private IEnumerable<string> TitleInputValidator(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            yield return "Title is required.";
+            yield break;
+        }
+        
+        if (title.Length < 3 || title.Length > 50)
+        {
+            yield return "Title must be between 3 and 50 characters.";
+        }
     }
 }
