@@ -12,7 +12,9 @@
 @using NoExp.Infrastructure.Persistence
 @using NoExp.Presentation.Components.Account
 @using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
+@using FluentValidation
+@using System.Threading
+@using MudExRichTextEditor
 
 @inject IDialogService DialogService
 @inject AuthenticationStateProvider AuthStateProvider
@@ -22,32 +24,27 @@
 @inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
-    <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid">
-
-        <MudTextField @bind-Value="Input.Title" 
+    <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+        <MudTextField @bind-Value="Input.Title"
                         Label="Job Title" 
                         Variant="Variant.Outlined" 
                         For="@(() => Input.Title)"    
                         MaxLength="50" 
                         Adornment="Adornment.Start" 
-                        AdornmentIcon="@Icons.Material.Filled.Title"
-                        Validation="@(new Func<string, IEnumerable<string>>(TitleInputValidator))" Required="true"/>
+                        AdornmentIcon="@Icons.Material.Filled.Title"/>
        
         <MudCard class="mb-3">
             <MudCardContent>
                 <MudText Typo="Typo.h6">Description</MudText>
-                <MudExRichTextEdit @ref="@Editor"
-                                   @bind-Value="Input.Description"   
+                <MudExRichTextEdit @bind-Value="Input.Description"
                                    ReadOnly="false"
                                    Tools="CustomTools.ToArray()"
                                    Class="m-2 mh-100"
                                    Placeholder="Description"
-                                   EnableResize="true">
+                                   EnableResize="true"
+                                   Required="true"
+                                   TextChanged="OnDescriptionChanged">
                 </MudExRichTextEdit>
-                @if ( string.IsNullOrEmpty(Input.Description))
-                {
-                    <MudText Color="Color.Error" Typo="Typo.caption">Description is required.</MudText>
-                }
             </MudCardContent>
         </MudCard>
 
@@ -122,17 +119,22 @@
     private MudForm? _form;
     private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
-    private List<string> AddedRequirements { get; set; } = new();
-    private List<string> AddedResponsibilities { get; set; } = new();
     private List<string> AddedTechStack { get; set; } = new();
-    private MudExRichTextEdit Editor;
-    private string descriptionContent => Input.Description;
 
+    JobAdModelValidator validator = new JobAdModelValidator();
+
+    private void OnDescriptionChanged(string html)
+    {
+        Input.Description = html;
+        StateHasChanged();
+    }
 
     private async Task OnValidSubmitAsync()
     {
         await _form!.Validate();
-        if (_isValid)
+        var result = await validator.ValidateAsync(Input);
+
+        if (result.IsValid)
         {
             try
             {
@@ -151,7 +153,7 @@
                 {
                     Id = Guid.NewGuid(),
                     Title = Input.Title,
-                    Description = Input.Description,
+                    Description = Input.Description, // Use Description directly
                     WorkType = Input.WorkType,
                     WorkMode = Input.WorkMode,
                     Location = Input.Location,
@@ -161,18 +163,16 @@
                     ExpirationDate = Input.ExpirationDate,
                     EmployerProfileId = employerProfile!.Id,
                     EmployerProfile = employerProfile
-
                 };
 
                 await JobAdService.SaveJobAdAsync(newJobAd);
                 Snackbar.Add("Your Job Ad has been created successfully.", MudBlazor.Severity.Success);
                 NavigationManager.NavigateTo("/");
-            } 
+            }
             catch (Exception ex)
             {
                 Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
             }
-
         }
     }
 
@@ -216,74 +216,70 @@
 
     private sealed class JobAdModel
     {
-        [Required(ErrorMessage = "Job Ad Title is required")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "Title must be between 3 and 50 characters.")]
+
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Job Ad Description is required")]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Description must be between 10 and 1000 characters.")]
         public string Description { get; set; }
 
         public WorkType WorkType { get; set; }
 
         public WorkMode WorkMode { get; set; }
 
-        [Required(ErrorMessage = "Location is required")]
-        [StringLength(50, MinimumLength = 3, ErrorMessage = "Location must be between 3 and 50 characters.")]
         public string Location { get; set; }
 
-        [Required(ErrorMessage = "Minimum Salary is required")]
         public decimal SalaryMin { get; set; }
 
-        [Required(ErrorMessage = "Maximum Salary is required")]
-        [GreaterThan("SalaryMin", ErrorMessage = "Maximum Salary must be greater than Minimum Salary.")]
         public decimal SalaryMax { get; set; }
 
-        [Required(ErrorMessage = "Tech Stack is required")]
         public string TechStack { get; set;  }
 
-        [Required(ErrorMessage = "Requirements are required")]
-        [StringLength(100, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 1000 characters.")]
         public string Requirements { get; set; }
 
-        [Required(ErrorMessage = "Responsibilities are required")]
-        [StringLength(100, MinimumLength = 10, ErrorMessage = "Responsibilities must be between 10 and 1000 characters.")]
         public string Responsibilities { get; set; }
 
-        [Required(ErrorMessage = "Offer details are required")]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Offer must be between 10 and 1000 characters.")]
         public string Offer { get; set; }
 
         public DateTime? ExpirationDate { get; set; }
     }
 
-    private IEnumerable<string> TitleInputValidator(string title)
+    private class JobAdModelValidator : AbstractValidator<JobAdModel>
     {
-        if (string.IsNullOrWhiteSpace(title))
+        public JobAdModelValidator()
         {
-            yield return "Title is required.";
-            yield break;
+            RuleFor(model => model.Title)
+                .NotNull()
+                .MinimumLength(5)
+                .MaximumLength(100);
+
+            RuleFor(model => model.Description)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Description is required")
+                .Must(description =>
+                {
+                    if (string.IsNullOrEmpty(description)) return false;
+                    // Strip HTML tags to count actual content length
+                    var strippedText = Regex.Replace(description, "<.*?>", string.Empty);
+                    return strippedText.Length >= 15;
+                })
+                .WithMessage("Description must contain at least 15 characters of text")
+                .Must(description =>
+                {
+                    if (string.IsNullOrEmpty(description)) return true;
+                    var strippedText = Regex.Replace(description, "<.*?>", string.Empty);
+                    return strippedText.Length <= 5000;
+                })
+                .WithMessage("Description cannot exceed 5000 characters");
+            
+
         }
-        
-        if (title.Length < 3 || title.Length > 50)
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
-            yield return "Title must be between 3 and 50 characters.";
-        }
-    }
-
-    private IEnumerable<string> DescriptionInputValidator(string title)
-    {
-        if (string.IsNullOrWhiteSpace(title))
-        {
-            yield return "Description is required.";
-            yield break;
-        }
-
-        if (title.Length < 3 || title.Length > 5000)
-        {
-            yield return "Title must be between 3 and 5000 characters.";
-        }
-
-
+            var result = await ValidateAsync(ValidationContext<JobAdModel>.CreateWithOptions((JobAdModel)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
     }
 }
