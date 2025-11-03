@@ -21,7 +21,7 @@
 
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
     <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid">
-
+       
         <MudTextField @bind-Value="Input.Title" 
                         Label="Job Title" 
                         Variant="Variant.Outlined" 
@@ -35,13 +35,15 @@
             <MudCardContent>
                 <MudText Typo="Typo.h6">Description</MudText>
                 <MudExRichTextEdit @ref="@Editor"
+                                   @bind-Value="Input.Description"   
                                    ReadOnly="false"
                                    Tools="CustomTools.ToArray()"
                                    Class="m-2 mh-100"
                                    Placeholder="Description"
                                    EnableResize="true"
-                                   @bind-Value="Input.Description">
+                                   Validation="@(new Func<string, IEnumerable<string>>(DescriptionInputValidator))">
                 </MudExRichTextEdit>
+                <ValidationMessage For="@(() => Input.Description)" />
             </MudCardContent>
         </MudCard>
 
@@ -262,5 +264,21 @@
         {
             yield return "Title must be between 3 and 50 characters.";
         }
+    }
+
+    private IEnumerable<string> DescriptionInputValidator(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            yield return "Description is required.";
+            yield break;
+        }
+
+        if (title.Length < 3 || title.Length > 5000)
+        {
+            yield return "Title must be between 3 and 5000 characters.";
+        }
+
+
     }
 }
