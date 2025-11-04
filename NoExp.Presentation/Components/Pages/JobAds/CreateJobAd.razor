@@ -26,9 +26,9 @@
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
     <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid" Validation="@(validator.ValidateValue)" ValidationDelay="0">
         <MudTextField @bind-Value="Input.Title"
+                        For="@(() => Input.Title)"
                         Label="Job Title" 
                         Variant="Variant.Outlined" 
-                        For="@(() => Input.Title)"    
                         MaxLength="50" 
                         Adornment="Adornment.Start" 
                         AdornmentIcon="@Icons.Material.Filled.Title"/>
@@ -38,12 +38,11 @@
                 <MudText Typo="Typo.h6">Description</MudText>
                 <MudExRichTextEdit @bind-Value="Input.Description"
                                    ReadOnly="false"
-                                   Tools="CustomTools.ToArray()"
+                                   Tools="@CustomTools.ToArray()"
                                    Class="m-2 mh-100"
                                    Placeholder="Description"
                                    EnableResize="true"
-                                   Required="true"
-                                   TextChanged="OnDescriptionChanged">
+                                   Required="true">
                 </MudExRichTextEdit>
             </MudCardContent>
         </MudCard>
@@ -68,6 +67,7 @@
             </MudCardContent>
             <MudCardActions>
                 <MudTextField @bind-Value="Input.TechStack"
+                              For="@(() => Input.TechStack)"
                               Placeholder="Type and press Enter"
                               OnKeyDown="TechStackHandleKeyDown"
                               Adornment="Adornment.End"
@@ -75,15 +75,19 @@
                               AdornmentColor="Color.Primary"
                               Immediate="true"
                               Variant="Variant.Outlined"
-                              TextUpdateSuppression=false />
+                              TextUpdateSuppression=false/>
             </MudCardActions>
         </MudCard>
         
-        <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate" Variant="Variant.Outlined" Adornment="Adornment.Start" />
+        <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate"
+                       For="@(() => Input.ExpirationDate)"      
+                       Variant="Variant.Outlined" Adornment="Adornment.Start" />
 
         <MudGrid>
              <MudItem xs="6">
-                <MudSelect T="WorkType" Variant="Variant.Outlined" Label="Work Type" @bind-Value="Input.WorkType" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                <MudSelect T="WorkType" Label="Work Type" @bind-Value="Input.WorkType"
+                           For="@(() => Input.WorkType)"
+                           Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
                     @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
                     {
                         <MudSelectItem Value="@type">@type</MudSelectItem>
@@ -91,7 +95,9 @@
                 </MudSelect>
              </MudItem>
              <MudItem xs="6">
-                <MudSelect T="WorkMode" Variant="Variant.Outlined" Label="Work Mode" @bind-Value="Input.WorkMode" Required="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                <MudSelect T="WorkMode" Label="Work Mode" @bind-Value="Input.WorkMode"
+                           For="@(() => Input.WorkMode)"
+                           Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
                     @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
                     {
                         <MudSelectItem Value="@mode">@mode</MudSelectItem>
@@ -100,14 +106,20 @@
              </MudItem>
         </MudGrid>
 
-        <MudTextField @bind-Value="Input.Location" Label="Location" Variant="Variant.Outlined" For="@(() => Input.Location)" Required="true" MaxLength="100" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
+        <MudTextField Label="Location" @bind-Value="Input.Location" 
+                      For="@(() => Input.Location)" 
+                      Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation" />
 
         <MudGrid Class="mb-4">
             <MudItem xs="6">
-                <MudTextField @bind-Value="Input.SalaryMin" Label="Minimum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMin)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                <MudTextField Label="Minimum Salary" @bind-Value="Input.SalaryMin"
+                              For="@(() => Input.SalaryMin)"
+                              Variant="Variant.Outlined"  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
             </MudItem>
             <MudItem xs="6">
-                <MudTextField @bind-Value="Input.SalaryMax" Label="Maximum Salary" Variant="Variant.Outlined" For="@(() => Input.SalaryMax)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                <MudTextField Label="Maximum Salary" @bind-Value="Input.SalaryMax"
+                              For="@(() => Input.SalaryMax)"
+                              Variant="Variant.Outlined"  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
             </MudItem>
         </MudGrid>
 
@@ -119,15 +131,9 @@
     private MudForm? _form;
     private JobAdModel Input { get; set; } = new();
     private bool _isValid = false;
-    private List<string> AddedTechStack { get; set; } = new();
-
     JobAdModelValidator validator = new JobAdModelValidator();
-
-    private void OnDescriptionChanged(string html)
-    {
-        Input.Description = html;
-        StateHasChanged();
-    }
+    private List<string> AddedTechStack { get; set; } = new();
+    
 
     private async Task OnValidSubmitAsync()
     {
@@ -153,7 +159,7 @@
                 {
                     Id = Guid.NewGuid(),
                     Title = Input.Title,
-                    Description = Input.Description, // Use Description directly
+                    Description = Input.Description,
                     WorkType = Input.WorkType,
                     WorkMode = Input.WorkMode,
                     Location = Input.Location,
@@ -251,27 +257,44 @@
                 .MinimumLength(5)
                 .MaximumLength(100);
 
-            RuleFor(model => model.Description)
+            RuleFor(model => model.WorkType)
                 .NotNull()
-                .NotEmpty()
-                .WithMessage("Description is required")
-                .Must(description =>
-                {
-                    if (string.IsNullOrEmpty(description)) return false;
-                    // Strip HTML tags to count actual content length
-                    var strippedText = Regex.Replace(description, "<.*?>", string.Empty);
-                    return strippedText.Length >= 15;
-                })
-                .WithMessage("Description must contain at least 15 characters of text")
-                .Must(description =>
-                {
-                    if (string.IsNullOrEmpty(description)) return true;
-                    var strippedText = Regex.Replace(description, "<.*?>", string.Empty);
-                    return strippedText.Length <= 5000;
-                })
-                .WithMessage("Description cannot exceed 5000 characters");
-            
+                .IsInEnum();
 
+            RuleFor(model => model.WorkMode)
+                .NotNull()
+                .IsInEnum();
+
+            RuleFor(model => model.TechStack)
+                .MinimumLength(3)    
+                .MaximumLength(200);
+
+            RuleFor(model => model.ExpirationDate)
+                .Must(date => date.HasValue)
+                .WithMessage("Expiration date is required")
+                .Must(date => !date.HasValue || date.Value > DateTime.UtcNow)
+                .WithMessage("Expiration date must be in the future");
+
+            RuleFor(model => model.Location)
+                .NotNull()
+                .MinimumLength(3)
+                .MaximumLength(100);
+
+            RuleFor(model => model.SalaryMin)
+                .NotNull()
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Minimum salary cannot be negative")
+                .LessThan(1000000)
+                .WithMessage("Minimum salary is too high");
+
+            RuleFor(model => model.SalaryMax)
+                .NotNull()
+                .GreaterThanOrEqualTo(model => model.SalaryMin)
+                .WithMessage("Maximum salary must be greater than or equal to minimum salary")
+                .LessThan(1000000)
+                .WithMessage("Maximum salary is too high")
+                .When(model => model.SalaryMin > 0);
+            
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
