@@ -7,5 +7,7 @@ namespace NoExp.Application.Interfaces
         Task<JobAd> SaveJobAdAsync(JobAd jobAd);
 
         Task<List<JobAd>> GetAllJobAdsAsync();
+
+        Task<List<JobAd>> GetAllEmployerJobAdsAsync(string employerProfileId);
     }
 }

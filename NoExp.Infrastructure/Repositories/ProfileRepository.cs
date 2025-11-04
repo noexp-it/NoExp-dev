@@ -3,12 +3,6 @@ using NoExp.Domain.Entities;
 using NoExp.Domain.Entities.Abstracts;
 using NoExp.Domain.Interfaces;
 using NoExp.Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NoExp.Infrastructure.Repositories
 {

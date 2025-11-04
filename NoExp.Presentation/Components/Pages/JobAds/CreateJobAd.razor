@@ -24,7 +24,7 @@
 @inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
-    <MudForm @ref="_form" Model="Input" @bind-IsValid="_isValid" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+    <MudForm @ref="form" Model="Input" Validation="@(validator.ValidateValue)" ValidationDelay="0">
         <MudTextField @bind-Value="Input.Title"
                         For="@(() => Input.Title)"
                         Label="Job Title" 
@@ -123,21 +123,20 @@
             </MudItem>
         </MudGrid>
 
-        <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid">Submit</MudButton>
+        <MudButton OnClick="OnValidSubmitAsync" Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
     </MudForm>
 </MudPaper>
 
 @code {
-    private MudForm? _form;
+    private MudForm? form;
     private JobAdModel Input { get; set; } = new();
-    private bool _isValid = false;
     JobAdModelValidator validator = new JobAdModelValidator();
     private List<string> AddedTechStack { get; set; } = new();
     
 
     private async Task OnValidSubmitAsync()
     {
-        await _form!.Validate();
+        await form!.Validate();
         var result = await validator.ValidateAsync(Input);
 
         if (result.IsValid)
@@ -265,8 +264,7 @@
                 .NotNull()
                 .IsInEnum();
 
-            RuleFor(model => model.TechStack)
-                .MinimumLength(3)    
+            RuleFor(model => model.TechStack)   
                 .MaximumLength(200);
 
             RuleFor(model => model.ExpirationDate)

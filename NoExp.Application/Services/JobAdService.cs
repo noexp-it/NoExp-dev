@@ -21,5 +21,10 @@ namespace NoExp.Application.Services
         {
             return await jobAdRepository.GetAllJobAdsAsync();
         }
+
+        public async Task<List<JobAd>> GetAllEmployerJobAdsAsync(string employerProfileId)
+        {
+            return await jobAdRepository.GetJobAdsByEmployerProfileIdAsync(employerProfileId);
+        }
     }
 }

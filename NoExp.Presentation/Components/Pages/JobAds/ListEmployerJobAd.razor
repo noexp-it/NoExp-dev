@@ -1,0 +1,71 @@
+﻿@page "/JobAds/Own"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "EmployerRole")]
+
+@using Microsoft.AspNetCore.Authorization
+@using NoExp.Application.Interfaces
+@using NoExp.Domain.Entities
+@using NoExp.Domain.Enums.JobAd
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJobAdService JobAdService
+@inject MudBlazor.ISnackbar Snackbar
+@inject IProfileService ProfileService
+
+@foreach (var jobAd in jobAds)
+{
+    <MudCard class="m-3">
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="1">
+                    <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg" />
+                </MudItem>
+                <MudItem xs="12" sm="11">
+                    <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
+                    <MudText Align="Align.Center">@((MarkupString)@jobAd.Description)</MudText>
+                    <MudItem Class="d-flex justify-content-center">
+                        @foreach (var skill in jobAd.TechStack)
+                        {
+                            <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
+                        }
+                    </MudItem>
+                </MudItem>
+            </MudGrid>
+            <MudCardActions Class="d-flex justify-content-end">
+                <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+                <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                <MudButton>Apply Now!</MudButton>
+            </MudCardActions>
+        </MudCardContent>
+    </MudCard>
+
+}
+
+@code {
+    private List<JobAd> jobAds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+            var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+
+            EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
+
+            if (employerProfile == null)
+            {
+                Snackbar.Add("Employer profile not found. Please create an employer profile first.", MudBlazor.Severity.Error);
+                return;
+            }
+
+            jobAds = await JobAdService.GetAllEmployerJobAdsAsync(employerProfile.Id);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
+        }
+    
+        
+    }
+}
