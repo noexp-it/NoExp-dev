@@ -1,0 +1,36 @@
+﻿@page "/post/{Id:guid}"
+@using NoExp.Application.Interfaces
+@using NoExp.Domain.Entities
+@rendermode InteractiveServer
+
+@inject IJobAdService JobAdService
+
+<MudPaper Class="pa-4" Elevation="4">
+    @if (jobAd == null)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText Typo="Typo.h4" GutterBottom="true">@jobAd.Title</MudText>
+                <MudText Typo="Typo.subtitle1" Color="Color.Secondary" GutterBottom="true">@jobAd.PublishDate</MudText>
+                <MudText Typo="Typo.body1">@jobAd.Description</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private JobAd? jobAd;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobAd = await JobAdService.GetJobAdByIdAsync(Id);
+    }
+
+}
