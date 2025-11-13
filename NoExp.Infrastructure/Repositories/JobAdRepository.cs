@@ -35,9 +35,9 @@ namespace NoExp.Infrastructure.Repositories
 
         public async Task<JobAd> GetJobAdByIdAsync(Guid jobAdId)
         {
-            JobAd jobAd = await context.JobAds
+            return await context.JobAds
+                .Include(i => i.EmployerProfile)
                 .FirstOrDefaultAsync(j => j.Id == jobAdId)!;
-            return jobAd;
         }
     }
 }

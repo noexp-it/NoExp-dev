@@ -9,5 +9,7 @@ namespace NoExp.Application.Interfaces
         Task<List<JobAd>> GetAllJobAdsAsync();
 
         Task<List<JobAd>> GetAllEmployerJobAdsAsync(string employerProfileId);
+        
+        Task<JobAd> GetJobAdByIdAsync(Guid jobAdId);
     }
 }

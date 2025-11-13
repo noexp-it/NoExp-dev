@@ -14,30 +14,32 @@
 
 @foreach (var jobAd in jobAds)
 {
-    <MudCard class="m-3">
-        <MudCardContent>
-            <MudGrid>
-                <MudItem xs="12" sm="1">
-                    <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg" />
-                </MudItem>
-                <MudItem xs="12" sm="11">
-                    <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
-                    <MudText Align="Align.Center">@((MarkupString)@jobAd.Description)</MudText>
-                    <MudItem Class="d-flex justify-content-center">
-                        @foreach (var skill in jobAd.TechStack)
-                        {
-                            <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
-                        }
+    <a href="@($"/JobAds/Details/{jobAd.Id}")" class="text-decoration-none">
+        <MudCard class="m-3" style="cursor: pointer;">
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" sm="1">
+                        <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg" />
                     </MudItem>
-                </MudItem>
-            </MudGrid>
-            <MudCardActions Class="d-flex justify-content-end">
-                <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
-                <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
-                <MudButton>Apply Now!</MudButton>
-            </MudCardActions>
-        </MudCardContent>
-    </MudCard>
+                    <MudItem xs="12" sm="11">
+                        <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
+                        <MudText Align="Align.Center">@((MarkupString)@jobAd.Description)</MudText>
+                        <MudItem Class="d-flex justify-content-center">
+                            @foreach (var skill in jobAd.TechStack)
+                            {
+                                <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
+                            }
+                        </MudItem>
+                    </MudItem>
+                </MudGrid>
+                <MudCardActions Class="d-flex justify-content-end">
+                    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                    <MudButton>Apply Now!</MudButton>
+                </MudCardActions>
+            </MudCardContent>
+        </MudCard>
+    </a>
 
 }
 
