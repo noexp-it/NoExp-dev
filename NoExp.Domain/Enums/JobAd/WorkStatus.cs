@@ -4,5 +4,5 @@ public enum WorkStatus
 {
     Active,
     Inactive,
-    Expired,
+    Expired
 }

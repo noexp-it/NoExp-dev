@@ -1,6 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NoExp.Infrastructure.Persistence
-
 @inject SignInManager<ApplicationUser> SignInManager
 
 <ul class="nav nav-pills flex-column">
@@ -37,4 +36,5 @@
     {
         hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
     }
+
 }

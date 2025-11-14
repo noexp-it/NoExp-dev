@@ -1,21 +1,19 @@
 using Microsoft.AspNetCore.Identity;
 using NoExp.Domain.Entities.Abstracts;
 
-namespace NoExp.Infrastructure.Persistence
+namespace NoExp.Infrastructure.Persistence;
+
+public class ApplicationUser : IdentityUser
 {
-    public class ApplicationUser : IdentityUser
-    {
-        public string FirstName { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
 
-        public string LastName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime? LastLoginAt { get; set; }
+    public DateTime? LastLoginAt { get; set; }
 
-        public bool IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-        public virtual UserProfile? UserProfile { get; set; }
-    }
-
+    public virtual UserProfile? UserProfile { get; set; }
 }

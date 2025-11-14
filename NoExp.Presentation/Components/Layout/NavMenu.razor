@@ -4,8 +4,8 @@
 
 <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
     <MudNavMenu Class="mud-width-full">
-        <img src="images/logo.png" alt="Logo" style="max-width: 100%; max-height: 150px; object-fit: contain;" />
-        <MudDivider Class="my-2" />
+        <img src="images/logo.png" alt="Logo" style="max-width: 100%; max-height: 150px; object-fit: contain;"/>
+        <MudDivider Class="my-2"/>
         <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
         <AuthorizeView Roles="EmployerRole">
             <MudNavGroup Title="Job Ads" Expanded="false" Icon="@Icons.Material.Filled.Storage">
@@ -16,23 +16,28 @@
         <AuthorizeView>
             <Authorized>
                 <MudNavGroup Title="@context.User.Identity?.Name" Icon="@Icons.Material.Filled.Person" Expanded="false">
-                    <MudButton Href="Account/Manage" Color="Color.Info" StartIcon="@Icons.Material.Filled.People" Style="width:100%; text-align:left;">
+                    <MudButton Href="Account/Manage" Color="Color.Info" StartIcon="@Icons.Material.Filled.People"
+                               Style="width:100%; text-align:left;">
                         Profile
                     </MudButton>
                     <MudItem>
                         <form action="Account/Logout" method="post" style="margin:0; padding:0;">
-                            <AntiforgeryToken />
-                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                            <MudButton ButtonType="ButtonType.Submit" Color="Color.Error" StartIcon="@Icons.Material.Filled.Logout" Style="width:100%; text-align:left;">
+                            <AntiforgeryToken/>
+                            <input type="hidden" name="ReturnUrl" value="@currentUrl"/>
+                            <MudButton ButtonType="ButtonType.Submit" Color="Color.Error"
+                                       StartIcon="@Icons.Material.Filled.Logout" Style="width:100%; text-align:left;">
                                 Logout
-                            </MudButton>  
+                            </MudButton>
                         </form>
                     </MudItem>
                 </MudNavGroup>
             </Authorized>
             <NotAuthorized>
-                 <MudNavLink Href="Account/Register" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">Register</MudNavLink>
-                 <MudNavLink Href="Account/Login" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">Login</MudNavLink>
+                <MudNavLink Href="Account/Register" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">
+                    Register
+                </MudNavLink>
+                <MudNavLink Href="Account/Login" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">Login
+                </MudNavLink>
             </NotAuthorized>
         </AuthorizeView>
     </MudNavMenu>
@@ -57,5 +62,6 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
+
 }
 

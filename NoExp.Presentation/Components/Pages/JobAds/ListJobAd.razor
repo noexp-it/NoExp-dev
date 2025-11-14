@@ -1,6 +1,5 @@
 ﻿@using NoExp.Application.Interfaces
 @using NoExp.Domain.Entities
-@using NoExp.Domain.Enums.JobAd
 @inject IJobAdService JobAdService
 
 @foreach (var jobAd in jobAds)
@@ -10,11 +9,11 @@
             <MudCardContent>
                 <MudGrid>
                     <MudItem xs="12" sm="1">
-                        <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg" />
+                        <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
                     </MudItem>
                     <MudItem xs="12" sm="11">
                         <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
-                        <MudText Align="Align.Center">@((MarkupString)@jobAd.Description)</MudText>
+                        <MudText Align="Align.Center">@((MarkupString)jobAd.Description)</MudText>
                         <MudItem Class="d-flex justify-content-center">
                             @foreach (var skill in jobAd.TechStack)
                             {
@@ -24,8 +23,8 @@
                     </MudItem>
                 </MudGrid>
                 <MudCardActions Class="d-flex justify-content-end">
-                    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
                     <MudButton>Apply Now!</MudButton>
                 </MudCardActions>
             </MudCardContent>
@@ -40,4 +39,5 @@
     {
         jobAds = await JobAdService.GetAllJobAdsAsync();
     }
+
 }

@@ -1,8 +1,6 @@
 ﻿@page "/JobAds/Details/{Id:guid}"
 @using NoExp.Application.Interfaces
 @using NoExp.Domain.Entities
-@using MudBlazor.Extensions
-@using System
 
 @rendermode InteractiveServer
 
@@ -10,200 +8,206 @@
 
 
 
-    @if (jobAd == null)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
-    }
-    else
-    {
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
-    <MudGrid>
-        <!-- Header Section -->
-        <MudItem xs="12">
-            <MudPaper Class="pa-4" Elevation="2">
-                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center">
-                        <MudAvatar Size="Size.Large" Color="Color.Primary">
-                            <MudIcon Icon="@Icons.Material.Filled.Business" />
-                        </MudAvatar>
-                        <MudStack Spacing="0">
-                            <MudText Typo="Typo.h5"><strong>@jobAd.Title</strong></MudText>
-                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-                                <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Small" />
-                                <MudText Typo="Typo.body2">@jobAd.Location</MudText>
-                                <MudText Typo="Typo.body2">-</MudText>
-                                <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Small" />
-                                <MudText Typo="Typo.body2">@jobAd.EmployerProfile.CompanyName</MudText>
+@if (jobAd == null)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large"/>
+}
+else
+{
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudGrid>
+            <!-- Header Section -->
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Elevation="2">
+                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                        <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center">
+                            <MudAvatar Size="Size.Large" Color="Color.Primary">
+                                <MudIcon Icon="@Icons.Material.Filled.Business"/>
+                            </MudAvatar>
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.h5"><strong>@jobAd.Title</strong></MudText>
+                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Small"/>
+                                    <MudText Typo="Typo.body2">@jobAd.Location</MudText>
+                                    <MudText Typo="Typo.body2">-</MudText>
+                                    <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Small"/>
+                                    <MudText Typo="Typo.body2">@jobAd.EmployerProfile.CompanyName</MudText>
+                                </MudStack>
                             </MudStack>
                         </MudStack>
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" Class="px-8">
+                            Apply
+                        </MudButton>
                     </MudStack>
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" Class="px-8">
-                        Apply
-                    </MudButton>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
+                </MudPaper>
+            </MudItem>
 
-        <!-- Tags Section -->
-        <MudItem xs="12">
-            <MudPaper Class="pa-4" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-3"><strong>Job Details</strong></MudText>
-                <MudStack Row="true" Spacing="2">
-                    <MudChip T="string" Icon="@Icons.Material.Filled.Work" Color="Color.Default">@jobAd.WorkType</MudChip>
-                    <MudChip T="string" Icon="@Icons.Material.Filled.HomeWork" Color="Color.Default">@jobAd.WorkMode</MudChip>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12">
-            <MudPaper Class="pa-4" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-3"><strong>Tech Stack</strong></MudText>
-                <MudStack Row="true" Spacing="2">
-                    @foreach (var skill in jobAd.TechStack)
-                    {
-                        <MudChip T="string" Icon="@Icons.Material.Filled.Code" Color="Color.Info">@skill</MudChip>
-                    }
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-
-        <!-- Main Content Grid: Left Column (Job Description) + Right Column (Similar Offers) -->
-        <MudItem xs="12" lg="8">
-            <MudPaper Class="pa-4" Elevation="2">
-                <!-- Job Description Section -->
-                <MudText Typo="Typo.h6" Class="mb-3"><strong>Job Description</strong></MudText>
-                
-                <MudText Typo="Typo.body1" Align="Align.Justify">
-                @((MarkupString)@jobAd.Description)
-                </MudText>
-            </MudPaper>
-        </MudItem>
-
-        <!-- Right Column: Similar Offers -->
-        <MudItem xs="12" lg="4">
-            <MudPaper Class="pa-4" Elevation="2">
-                <MudText Typo="Typo.h6" Class="mb-3"><strong>CHECK SIMILAR OFFERS</strong></MudText>
-                
-                <!-- Similar Job Card 1 -->
-                <MudCard Class="mb-3" Elevation="1">
-                    <MudCardContent>
-                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
-                            <MudAvatar Size="Size.Medium" Color="Color.Primary">
-                                <MudText Typo="Typo.body2">SC</MudText>
-                            </MudAvatar>
-                            <MudStack Spacing="0">
-                                <MudText Typo="Typo.subtitle2"><strong>Senior .Net Software Developer</strong></MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">100 - 150 PLN/h</MudText>
-                            </MudStack>
-                            <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small" Class="ml-auto" />
-                        </MudStack>
-                        <MudStack Row="true" Spacing="1" Class="mb-2">
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
-                        </MudStack>
-                    </MudCardContent>
-                </MudCard>
-
-                <!-- Similar Job Card 2 -->
-                <MudCard Class="mb-3" Elevation="1">
-                    <MudCardContent>
-                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
-                            <MudAvatar Size="Size.Medium" Color="Color.Secondary">
-                                <MudText Typo="Typo.body2">CB</MudText>
-                            </MudAvatar>
-                            <MudStack Spacing="0">
-                                <MudText Typo="Typo.subtitle2"><strong>.NET Developer (MAUI)</strong></MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">150 - 160 PLN/h</MudText>
-                            </MudStack>
-                            <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small" Class="ml-auto" />
-                        </MudStack>
-                        <MudStack Row="true" Spacing="1" Class="mb-2">
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Gliwice</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
-                        </MudStack>
-                    </MudCardContent>
-                </MudCard>
-
-                <!-- Similar Job Card 3 -->
-                <MudCard Class="mb-3" Elevation="1">
-                    <MudCardContent>
-                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
-                            <MudAvatar Size="Size.Medium" Color="Color.Tertiary">
-                                <MudText Typo="Typo.body2">AG</MudText>
-                            </MudAvatar>
-                            <MudStack Spacing="0">
-                                <MudText Typo="Typo.subtitle2"><strong>Senior Backend Software...</strong></MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">150 - 200 PLN/h</MudText>
-                            </MudStack>
-                            <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small" Class="ml-auto" />
-                        </MudStack>
-                        <MudStack Row="true" Spacing="1" Class="mb-2">
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
-                        </MudStack>
-                    </MudCardContent>
-                </MudCard>
-
-                <!-- Similar Job Card 4 -->
-                <MudCard Elevation="1">
-                    <MudCardContent>
-                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
-                            <MudAvatar Size="Size.Medium" Color="Color.Info">
-                                <MudText Typo="Typo.body2">ID</MudText>
-                            </MudAvatar>
-                            <MudStack Spacing="0">
-                                <MudText Typo="Typo.subtitle2"><strong>FullStack Developer (An...</strong></MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">140 - 175 PLN/h</MudText>
-                            </MudStack>
-                            <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small" Class="ml-auto" />
-                        </MudStack>
-                        <MudStack Row="true" Spacing="1" Class="mb-2">
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
-                        </MudStack>
-                    </MudCardContent>
-                </MudCard>
-            </MudPaper>
-        </MudItem>
-
-        <!-- Footer Reminder -->
-        <MudItem xs="12" Class="mb-5">
-            <MudPaper Class="pa-4" Elevation="1">
-                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.body1">
-                            Expire at <strong>@(jobAd?.ExpirationDate is DateTime d ? d.ToString("dd'/'MM'/'yyyy") : "-")</strong>
-                        </MudText>
-                        <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            @(DaysLeft) days left! Don't miss this opportunity!
-                        </MudText>
-                    </MudStack>
+            <!-- Tags Section -->
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudText Typo="Typo.h6" Class="mb-3"><strong>Job Details</strong></MudText>
                     <MudStack Row="true" Spacing="2">
-                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Bookmark">
-                            Save
-                        </MudButton>
-                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Share">
-                            Share
-                        </MudButton>
+                        <MudChip T="string" Icon="@Icons.Material.Filled.Work"
+                                 Color="Color.Default">@jobAd.WorkType</MudChip>
+                        <MudChip T="string" Icon="@Icons.Material.Filled.HomeWork"
+                                 Color="Color.Default">@jobAd.WorkMode</MudChip>
                     </MudStack>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudText Typo="Typo.h6" Class="mb-3"><strong>Tech Stack</strong></MudText>
+                    <MudStack Row="true" Spacing="2">
+                        @foreach (var skill in jobAd.TechStack)
+                        {
+                            <MudChip T="string" Icon="@Icons.Material.Filled.Code" Color="Color.Info">@skill</MudChip>
+                        }
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
 
-    }
-    
+            <!-- Main Content Grid: Left Column (Job Description) + Right Column (Similar Offers) -->
+            <MudItem xs="12" lg="8">
+                <MudPaper Class="pa-4" Elevation="2">
+                    <!-- Job Description Section -->
+                    <MudText Typo="Typo.h6" Class="mb-3"><strong>Job Description</strong></MudText>
+
+                    <MudText Typo="Typo.body1" Align="Align.Justify">
+                        @((MarkupString)jobAd.Description)
+                    </MudText>
+                </MudPaper>
+            </MudItem>
+
+            <!-- Right Column: Similar Offers -->
+            <MudItem xs="12" lg="4">
+                <MudPaper Class="pa-4" Elevation="2">
+                    <MudText Typo="Typo.h6" Class="mb-3"><strong>CHECK SIMILAR OFFERS</strong></MudText>
+
+                    <!-- Similar Job Card 1 -->
+                    <MudCard Class="mb-3" Elevation="1">
+                        <MudCardContent>
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
+                                <MudAvatar Size="Size.Medium" Color="Color.Primary">
+                                    <MudText Typo="Typo.body2">SC</MudText>
+                                </MudAvatar>
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.subtitle2"><strong>Senior .Net Software Developer</strong>
+                                    </MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">100 - 150 PLN/h</MudText>
+                                </MudStack>
+                                <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small"
+                                               Class="ml-auto"/>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-2">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <!-- Similar Job Card 2 -->
+                    <MudCard Class="mb-3" Elevation="1">
+                        <MudCardContent>
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
+                                <MudAvatar Size="Size.Medium" Color="Color.Secondary">
+                                    <MudText Typo="Typo.body2">CB</MudText>
+                                </MudAvatar>
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.subtitle2"><strong>.NET Developer (MAUI)</strong></MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">150 - 160 PLN/h</MudText>
+                                </MudStack>
+                                <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small"
+                                               Class="ml-auto"/>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-2">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Gliwice</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <!-- Similar Job Card 3 -->
+                    <MudCard Class="mb-3" Elevation="1">
+                        <MudCardContent>
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
+                                <MudAvatar Size="Size.Medium" Color="Color.Tertiary">
+                                    <MudText Typo="Typo.body2">AG</MudText>
+                                </MudAvatar>
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.subtitle2"><strong>Senior Backend Software...</strong></MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">150 - 200 PLN/h</MudText>
+                                </MudStack>
+                                <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small"
+                                               Class="ml-auto"/>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-2">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <!-- Similar Job Card 4 -->
+                    <MudCard Elevation="1">
+                        <MudCardContent>
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start" Class="mb-2">
+                                <MudAvatar Size="Size.Medium" Color="Color.Info">
+                                    <MudText Typo="Typo.body2">ID</MudText>
+                                </MudAvatar>
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.subtitle2"><strong>FullStack Developer (An...</strong></MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">140 - 175 PLN/h</MudText>
+                                </MudStack>
+                                <MudIconButton Icon="@Icons.Material.Filled.BookmarkBorder" Size="Size.Small"
+                                               Class="ml-auto"/>
+                            </MudStack>
+                            <MudStack Row="true" Spacing="1" Class="mb-2">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Warszawa</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Senior</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">B2B</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">Remote</MudChip>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudPaper>
+            </MudItem>
+
+            <!-- Footer Reminder -->
+            <MudItem xs="12" Class="mb-5">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                        <MudStack Spacing="0">
+                            <MudText Typo="Typo.body1">
+                                Expire at
+                                <strong>@(jobAd?.ExpirationDate is DateTime d ? d.ToString("dd'/'MM'/'yyyy") : "-")</strong>
+                            </MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                @(DaysLeft) days left! Don't miss this opportunity!
+                            </MudText>
+                        </MudStack>
+                        <MudStack Row="true" Spacing="2">
+                            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Bookmark">
+                                Save
+                            </MudButton>
+                            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Share">
+                                Share
+                            </MudButton>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+}
+
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+    [Parameter] public Guid Id { get; set; }
 
     private JobAd? jobAd;
 
@@ -212,7 +216,7 @@
             ? Math.Max(0, (exp - DateTime.UtcNow).Days)
             : 0;
 
-   
+
     protected override async Task OnInitializedAsync()
     {
         jobAd = await JobAdService.GetJobAdByIdAsync(Id);

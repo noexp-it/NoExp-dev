@@ -1,15 +1,14 @@
 ﻿using NoExp.Domain.Entities;
 
-namespace NoExp.Application.Interfaces
+namespace NoExp.Application.Interfaces;
+
+public interface IJobAdService
 {
-    public interface IJobAdService
-    {
-        Task<JobAd> SaveJobAdAsync(JobAd jobAd);
+    Task<JobAd> SaveJobAdAsync(JobAd jobAd);
 
-        Task<List<JobAd>> GetAllJobAdsAsync();
+    Task<List<JobAd>> GetAllJobAdsAsync();
 
-        Task<List<JobAd>> GetAllEmployerJobAdsAsync(string employerProfileId);
-        
-        Task<JobAd> GetJobAdByIdAsync(Guid jobAdId);
-    }
+    Task<List<JobAd>> GetAllEmployerJobAdsAsync(string employerProfileId);
+
+    Task<JobAd> GetJobAdByIdAsync(Guid jobAdId);
 }

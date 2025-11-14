@@ -8,5 +8,5 @@ public enum WorkType
     PartTime,
     Contract,
     Temporary,
-    Freelance,
+    Freelance
 }

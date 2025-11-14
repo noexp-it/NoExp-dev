@@ -1,38 +1,31 @@
 ﻿@page "/JobAds/Create"
-@rendermode InteractiveServer
-@attribute [Authorize(Roles = "EmployerRole")]
-
-@using System.ComponentModel.DataAnnotations
+@using FluentValidation
 @using Microsoft.AspNetCore.Authorization
 @using MudExRichTextEditor.Types
 @using NoExp.Application.Interfaces
-@using NoExp.Application.Services
 @using NoExp.Domain.Entities
 @using NoExp.Domain.Enums.JobAd
-@using NoExp.Infrastructure.Persistence
-@using NoExp.Presentation.Components.Account
-@using System.Text.RegularExpressions
-@using FluentValidation
-@using System.Threading
-@using MudExRichTextEditor
+@using Severity = MudBlazor.Severity
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "EmployerRole")]
 
 @inject IDialogService DialogService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IProfileService ProfileService
 @inject IJobAdService JobAdService
-@inject MudBlazor.ISnackbar Snackbar
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-4 mt-4 mx-auto " Elevation="2" MaxWidth="60%">
     <MudForm @ref="form" Model="Input" Validation="@(validator.ValidateValue)" ValidationDelay="0">
         <MudTextField @bind-Value="Input.Title"
-                        For="@(() => Input.Title)"
-                        Label="Job Title" 
-                        Variant="Variant.Outlined" 
-                        MaxLength="50" 
-                        Adornment="Adornment.Start" 
-                        AdornmentIcon="@Icons.Material.Filled.Title"/>
-       
+                      For="@(() => Input.Title)"
+                      Label="Job Title"
+                      Variant="Variant.Outlined"
+                      MaxLength="50"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Title"/>
+
         <MudCard class="mb-3">
             <MudCardContent>
                 <MudText Typo="Typo.h6">Description</MudText>
@@ -61,7 +54,7 @@
                                  OnClose="@((MudChip<string> chip) => RemoveItem(AddedTechStack, skill))"
                                  Closeable="true"
                                  Color="Color.Success"
-                                 Variant="Variant.Outlined" />
+                                 Variant="Variant.Outlined"/>
                     }
                 </MudChipSet>
             </MudCardContent>
@@ -75,51 +68,56 @@
                               AdornmentColor="Color.Primary"
                               Immediate="true"
                               Variant="Variant.Outlined"
-                              TextUpdateSuppression="false" />
+                              TextUpdateSuppression="false"/>
             </MudCardActions>
         </MudCard>
-        
+
         <MudDatePicker Label="Expiration Date" @bind-Date="Input.ExpirationDate"
-                       For="@(() => Input.ExpirationDate)"      
-                       Variant="Variant.Outlined" Adornment="Adornment.Start" />
+                       For="@(() => Input.ExpirationDate)"
+                       Variant="Variant.Outlined" Adornment="Adornment.Start"/>
 
         <MudGrid>
-             <MudItem xs="6">
+            <MudItem xs="6">
                 <MudSelect T="WorkType" Label="Work Type" @bind-Value="Input.WorkType"
                            For="@(() => Input.WorkType)"
-                           Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                           Variant="Variant.Outlined" Adornment="Adornment.Start"
+                           AdornmentIcon="@Icons.Material.Filled.Checklist">
                     @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
                     {
                         <MudSelectItem Value="@type">@type</MudSelectItem>
                     }
                 </MudSelect>
-             </MudItem>
-             <MudItem xs="6">
+            </MudItem>
+            <MudItem xs="6">
                 <MudSelect T="WorkMode" Label="Work Mode" @bind-Value="Input.WorkMode"
                            For="@(() => Input.WorkMode)"
-                           Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Checklist">
+                           Variant="Variant.Outlined" Adornment="Adornment.Start"
+                           AdornmentIcon="@Icons.Material.Filled.Checklist">
                     @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
                     {
                         <MudSelectItem Value="@mode">@mode</MudSelectItem>
                     }
                 </MudSelect>
-             </MudItem>
+            </MudItem>
         </MudGrid>
 
-        <MudTextField Label="Location" @bind-Value="Input.Location" 
-                      For="@(() => Input.Location)" 
-                      Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.MyLocation" />
+        <MudTextField Label="Location" @bind-Value="Input.Location"
+                      For="@(() => Input.Location)"
+                      Variant="Variant.Outlined" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.MyLocation"/>
 
         <MudGrid Class="mb-4">
             <MudItem xs="6">
                 <MudTextField Label="Minimum Salary" @bind-Value="Input.SalaryMin"
                               For="@(() => Input.SalaryMin)"
-                              Variant="Variant.Outlined"  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
             </MudItem>
             <MudItem xs="6">
                 <MudTextField Label="Maximum Salary" @bind-Value="Input.SalaryMax"
                               For="@(() => Input.SalaryMax)"
-                              Variant="Variant.Outlined"  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
             </MudItem>
         </MudGrid>
 
@@ -129,10 +127,10 @@
 
 @code {
     private MudForm? form;
-    private JobAdModel Input { get; set; } = new();
-    JobAdModelValidator validator = new JobAdModelValidator();
-    private List<string> AddedTechStack { get; set; } = new();
-    
+    private JobAdModel Input { get; } = new();
+    readonly JobAdModelValidator validator = new();
+    private List<string> AddedTechStack { get; } = new();
+
 
     private async Task OnValidSubmitAsync()
     {
@@ -146,11 +144,11 @@
                 var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
                 var userId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
 
-                EmployerProfile? employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
+                var employerProfile = await ProfileService.GetEmployerProfileByUserIdAsync(userId);
 
                 if (employerProfile == null)
                 {
-                    Snackbar.Add("Employer profile not found. Please create an employer profile first.", MudBlazor.Severity.Error);
+                    Snackbar.Add("Employer profile not found. Please create an employer profile first.", Severity.Error);
                     return;
                 }
 
@@ -172,12 +170,12 @@
                 };
 
                 await JobAdService.SaveJobAdAsync(newJobAd);
-                Snackbar.Add("Your Job Ad has been created successfully.", MudBlazor.Severity.Success);
+                Snackbar.Add("Your Job Ad has been created successfully.", Severity.Success);
                 NavigationManager.NavigateTo("/");
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error: {ex.Message}", MudBlazor.Severity.Error);
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
             }
         }
     }
@@ -192,13 +190,12 @@
             }
             else
             {
-                Snackbar.Add(new MarkupString($"{Input.TechStack} skill exists!"), MudBlazor.Severity.Error);
+                Snackbar.Add(new MarkupString($"{Input.TechStack} skill exists!"), Severity.Error);
             }
 
             await Task.Delay(10);
             Input.TechStack = string.Empty;
             StateHasChanged();
-
         }
     }
 
@@ -207,22 +204,21 @@
         list.Remove(item);
     }
 
-    private List<MudExRichTextEditor.Types.QuillTool> CustomTools = new List<QuillTool>
-{
-    new QuillTool(cls: "ql-header", group: 1, options: new string[] { "", "1", "2", "3", "4", "5", "6" }),
-    new QuillTool(cls: "ql-bold", group: 2),
-    new QuillTool(cls: "ql-italic", group: 2),
-    new QuillTool(cls: "ql-underline", group: 2),
-    new QuillTool(cls: "ql-list", group: 4, value: "ordered"),
-    new QuillTool(cls: "ql-list", group: 4, value: "bullet"),
-    new QuillTool(cls: "ql-align", group: 4, options: new string[] { "", "center", "right", "justify" }),
-    new QuillTool(cls: "ql-color", group: 3, options: Array.Empty<string>()),
-    new QuillTool(cls: "ql-blockquote", group: 5)
-};
+    private readonly List<QuillTool> CustomTools = new()
+    {
+        new QuillTool("ql-header", group: 1, options: new[] { "", "1", "2", "3", "4", "5", "6" }),
+        new QuillTool("ql-bold", group: 2),
+        new QuillTool("ql-italic", group: 2),
+        new QuillTool("ql-underline", group: 2),
+        new QuillTool("ql-list", group: 4, value: "ordered"),
+        new QuillTool("ql-list", group: 4, value: "bullet"),
+        new QuillTool("ql-align", group: 4, options: new[] { "", "center", "right", "justify" }),
+        new QuillTool("ql-color", group: 3, options: Array.Empty<string>()),
+        new QuillTool("ql-blockquote", group: 5)
+    };
 
     private sealed class JobAdModel
     {
-
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -237,7 +233,7 @@
 
         public decimal SalaryMax { get; set; }
 
-        public string TechStack { get; set;  }
+        public string TechStack { get; set; }
 
         public string Requirements { get; set; }
 
@@ -265,7 +261,7 @@
                 .NotNull()
                 .IsInEnum();
 
-            RuleFor(model => model.TechStack)   
+            RuleFor(model => model.TechStack)
                 .MaximumLength(200);
 
             RuleFor(model => model.ExpirationDate)
@@ -293,7 +289,6 @@
                 .LessThan(1000000)
                 .WithMessage("Maximum salary is too high")
                 .When(model => model.SalaryMin > 0);
-            
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
@@ -304,4 +299,5 @@
             return result.Errors.Select(e => e.ErrorMessage);
         };
     }
+
 }

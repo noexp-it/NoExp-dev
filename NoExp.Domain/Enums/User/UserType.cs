@@ -1,8 +1,7 @@
-﻿namespace NoExp.Domain.Enums
+﻿namespace NoExp.Domain.Enums;
+
+public enum UserType
 {
-    public enum UserType
-    {
-        Candidate,
-        Employer
-    }
+    Candidate,
+    Employer
 }
