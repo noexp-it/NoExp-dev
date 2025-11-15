@@ -8,18 +8,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="12.1.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9"/>
-        <PackageReference Include="MudBlazor" Version="8.13.0"/>
-        <PackageReference Include="MudExRichTextEditor" Version="8.13.0"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="FluentValidation" Version="12.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9" />
+        <PackageReference Include="MudBlazor" Version="8.13.0" />
+        <PackageReference Include="MudExRichTextEditor" Version="8.13.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\NoExp.Application\NoExp.Application.csproj"/>
-        <ProjectReference Include="..\NoExp.Infrastructure\NoExp.Infrastructure.csproj"/>
+        <ProjectReference Include="..\NoExp.Application\NoExp.Application.csproj" />
+        <ProjectReference Include="..\NoExp.Infrastructure\NoExp.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
