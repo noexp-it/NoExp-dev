@@ -6,248 +6,287 @@
 
 @rendermode InteractiveServer
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-6">
-    <!-- Search and Filter Section -->
-    <MudPaper Class="pa-4 mb-4" Elevation="2">
-        <MudGrid>
+<div class="job-listing-layout">
+    <!-- Left Sidebar with Filters -->
+    <aside class="filters-sidebar">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6" Class="mb-4">
+                <MudIcon Icon="@Icons.Material.Filled.FilterList" Class="mr-2"/>
+                Filters
+            </MudText>
+
             <!-- Search Bar -->
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="searchText"
-                              Label="Search jobs"
-                              Placeholder="Search by title, description, or tech stack..."
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search"
-                              Variant="Variant.Outlined"
-                              Immediate="true"
-                              OnDebounceIntervalElapsed="ApplyFilters"
-                              DebounceInterval="300"/>
-            </MudItem>
+            <MudTextField @bind-Value="searchText"
+                          Label="Search jobs"
+                          Placeholder="Search..."
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Variant="Variant.Outlined"
+                          Immediate="true"
+                          OnDebounceIntervalElapsed="ApplyFilters"
+                          DebounceInterval="300"
+                          Class="mb-4"/>
 
             <!-- Location Filter -->
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="locationFilter"
-                              Label="Location"
-                              Placeholder="Filter by location..."
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.LocationOn"
-                              Variant="Variant.Outlined"
-                              Immediate="true"
-                              OnDebounceIntervalElapsed="ApplyFilters"
-                              DebounceInterval="300"/>
-            </MudItem>
+            <MudTextField @bind-Value="locationFilter"
+                          Label="Location"
+                          Placeholder="Any location..."
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.LocationOn"
+                          Variant="Variant.Outlined"
+                          Immediate="true"
+                          OnDebounceIntervalElapsed="ApplyFilters"
+                          DebounceInterval="300"
+                          Class="mb-4"/>
 
             <!-- Work Type Multi-Select Filter -->
-            <MudItem xs="12" sm="6" md="3">
-                <MudSelect T="WorkType" 
-                           @bind-SelectedValues="workTypeFilters"
-                           Label="Work Type"
-                           Variant="Variant.Outlined"
-                           MultiSelection="true"
-                           SelectAll="true"
-                           SelectAllText="Select All Types"
-                           AdornmentIcon="@Icons.Material.Filled.Work"
-                           Adornment="Adornment.Start"
-                           AnchorOrigin="Origin.BottomCenter"
-                           ToStringFunc="@(type => type.ToString())">
-                    @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
-                    {
-                        <MudSelectItem T="WorkType" Value="@type">@type</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
+            <MudSelect T="WorkType" 
+                       SelectedValues="@workTypeFilters"
+                       SelectedValuesChanged="@OnWorkTypeFiltersChanged"
+                       Label="Work Type"
+                       Variant="Variant.Outlined"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       SelectAllText="Select All Types"
+                       AdornmentIcon="@Icons.Material.Filled.Work"
+                       Adornment="Adornment.Start"
+                       AnchorOrigin="Origin.BottomCenter"
+                       ToStringFunc="@(type => type.ToString())"
+                       Class="mb-4">
+                @foreach (var type in Enum.GetValues(typeof(WorkType)).Cast<WorkType>())
+                {
+                    <MudSelectItem T="WorkType" Value="@type">@type</MudSelectItem>
+                }
+            </MudSelect>
 
             <!-- Work Mode Multi-Select Filter -->
-            <MudItem xs="12" sm="6" md="3">
-                <MudSelect T="WorkMode" 
-                           @bind-SelectedValues="workModeFilters"
-                           Label="Work Mode"
-                           Variant="Variant.Outlined"
-                           MultiSelection="true"
-                           SelectAll="true"
-                           SelectAllText="Select All Modes"
-                           AdornmentIcon="@Icons.Material.Filled.HomeWork"
-                           Adornment="Adornment.Start"
-                           AnchorOrigin="Origin.BottomCenter"
-                           ToStringFunc="@(mode => mode.ToString())">
-                    @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
-                    {
-                        <MudSelectItem T="WorkMode" Value="@mode">@mode</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
+            <MudSelect T="WorkMode" 
+                       SelectedValues="@workModeFilters"
+                       SelectedValuesChanged="@OnWorkModeFiltersChanged"
+                       Label="Work Mode"
+                       Variant="Variant.Outlined"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       SelectAllText="Select All Modes"
+                       AdornmentIcon="@Icons.Material.Filled.HomeWork"
+                       Adornment="Adornment.Start"
+                       AnchorOrigin="Origin.BottomCenter"
+                       ToStringFunc="@(mode => mode.ToString())"
+                       Class="mb-4">
+                @foreach (var mode in Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>())
+                {
+                    <MudSelectItem T="WorkMode" Value="@mode">@mode</MudSelectItem>
+                }
+            </MudSelect>
 
             <!-- Salary Range Filter -->
-            <MudItem xs="12" sm="6" md="3">
-                <MudNumericField @bind-Value="minSalary"
-                                 Label="Min Salary"
-                                 Variant="Variant.Outlined"
-                                 Min="0"
-                                 Adornment="Adornment.Start"
-                                 AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
-            </MudItem>
+            <MudText Typo="Typo.subtitle2" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Size="Size.Small" Class="mr-1"/>
+                Salary Range
+            </MudText>
+            <MudNumericField T="decimal?" Value="@minSalary"
+                             ValueChanged="@OnMinSalaryChanged"
+                             Label="Min Salary"
+                             Variant="Variant.Outlined"
+                             Min="0"
+                             Adornment="Adornment.Start"
+                             AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                             Class="mb-3"/>
 
-            <MudItem xs="12" sm="6" md="3">
-                <MudNumericField @bind-Value="maxSalary"
-                                 Label="Max Salary"
-                                 Variant="Variant.Outlined"
-                                 Min="0"
-                                 Adornment="Adornment.Start"
-                                 AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
-            </MudItem>
+            <MudNumericField T="decimal?" Value="@maxSalary"
+                             ValueChanged="@OnMaxSalaryChanged"
+                             Label="Max Salary"
+                             Variant="Variant.Outlined"
+                             Min="0"
+                             Adornment="Adornment.Start"
+                             AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                             Class="mb-4"/>
 
-            <!-- Action Buttons and Results Info -->
-            <MudItem xs="12" Class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <MudStack Row="true" Spacing="2">
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.FilterList"
-                               OnClick="ApplyFilters">
-                        Apply Filters
-                    </MudButton>
+            <MudDivider Class="mb-4"/>
 
-                    <MudButton Variant="Variant.Outlined"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.Clear"
-                               OnClick="ClearFilters">
-                        Clear All
-                    </MudButton>
-                </MudStack>
+            <!-- Items per page selector -->
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Items per page</MudText>
+            <MudSelect T="int" @bind-Value="itemsPerPage" Variant="Variant.Outlined" Dense="true" FullWidth="true" Class="mb-4">
+                <MudSelectItem Value="5">5</MudSelectItem>
+                <MudSelectItem Value="10">10</MudSelectItem>
+                <MudSelectItem Value="15">15</MudSelectItem>
+                <MudSelectItem Value="20">20</MudSelectItem>
+                <MudSelectItem Value="50">50</MudSelectItem>
+            </MudSelect>
 
-                <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">
-                        <strong>@filteredJobAds.Count</strong> jobs found
-                    </MudText>
-
-                    <!-- Items per page selector -->
-                    <MudSelect T="int" @bind-Value="itemsPerPage" Label="Per page" Variant="Variant.Outlined" Dense="true" Style="min-width: 100px;">
-                        <MudSelectItem Value="5">5</MudSelectItem>
-                        <MudSelectItem Value="10">10</MudSelectItem>
-                        <MudSelectItem Value="15">15</MudSelectItem>
-                        <MudSelectItem Value="20">20</MudSelectItem>
-                        <MudSelectItem Value="50">50</MudSelectItem>
-                    </MudSelect>
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </MudPaper>
-
-    <!-- Job Ads List -->
-    @if (isLoading)
-    {
-        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4"/>
-    }
-    else if (!filteredJobAds.Any())
-    {
-        <MudPaper Class="pa-8 text-center" Elevation="0">
-            <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary"/>
-            <MudText Typo="Typo.h6" Class="mt-4">No job ads found</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">Try adjusting your filters or search criteria</MudText>
+            <!-- Action Buttons -->
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Secondary"
+                       StartIcon="@Icons.Material.Filled.Clear"
+                       OnClick="ClearFilters"
+                       FullWidth="true">
+                Clear All
+            </MudButton>
         </MudPaper>
-    }
-    else
-    {
-        <!-- Paginated Results Info -->
-        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3">
-            Showing @GetStartIndex() - @GetEndIndex() of @filteredJobAds.Count results
-        </MudText>
+    </aside>
 
-        @foreach (var jobAd in pagedJobAds)
+    <!-- Right Content Area with Job Listings -->
+    <main class="job-listings-content">
+        <!-- Top Bar with Results Info -->
+        <MudPaper Class="pa-3 mb-4 d-flex justify-content-between align-items-center flex-wrap" Elevation="1">
+            <MudText Typo="Typo.body1" Color="Color.Secondary">
+                <strong>@filteredJobAds.Count</strong> jobs found
+            </MudText>
+        </MudPaper>
+
+        <!-- Job Ads List -->
+        @if (isLoading)
         {
-            <MudCard Class="@GetJobCardClass(jobAd)" Elevation="2" Style="cursor: pointer; transition: all 0.3s; position: relative;" @onclick="@(() => NavigateToJobDetails(jobAd.Id))">
-                @* Special Badge for Practice/Internship *@
-                @if (jobAd.WorkType == WorkType.Practice || jobAd.WorkType == WorkType.Internship)
-                {
-                    <div class="entry-level-badge">
-                        <MudIcon Icon="@Icons.Material.Filled.Spa" Size="Size.Small" Class="me-1"/>
-                        @jobAd.WorkType
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4"/>
+        }
+        else if (!filteredJobAds.Any())
+        {
+            <MudPaper Class="pa-8 text-center" Elevation="0">
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary"/>
+                <MudText Typo="Typo.h6" Class="mt-4">No job ads found</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Try adjusting your filters or search criteria</MudText>
+            </MudPaper>
+        }
+        else
+        {
+            <!-- Paginated Results Info -->
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3">
+                Showing @GetStartIndex() - @GetEndIndex() of @filteredJobAds.Count results
+            </MudText>
+
+            @foreach (var jobAd in pagedJobAds)
+            {
+                <MudCard Class="@GetJobCardClass(jobAd)" Elevation="2" Style="cursor: pointer; transition: all 0.3s; position: relative;" @onclick="@(() => NavigateToJobDetails(jobAd.Id))">
+                    @* Special Badge for Practice/Internship *@
+                    @if (jobAd.WorkType == WorkType.Practice || jobAd.WorkType == WorkType.Internship)
+                    {
+                        <div class="entry-level-badge">
+                            <MudIcon Icon="@Icons.Material.Filled.Spa" Size="Size.Small" Class="me-1"/>
+                            @jobAd.WorkType
+                        </div>
+                    }
+
+                    @* Favorite Button *@
+                    <div class="favorite-button" @onclick:stopPropagation="true">
+                        <MudIconButton Icon="@(IsFavorite(jobAd.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
+                                       Color="@(IsFavorite(jobAd.Id) ? Color.Error : Color.Default)"
+                                       Size="Size.Small"
+                                       OnClick="@(() => ToggleFavorite(jobAd.Id))"/>
                     </div>
-                }
-                
-                @* Favorite Button *@
-                <div class="favorite-button" @onclick:stopPropagation="true">
-                    <MudIconButton Icon="@(IsFavorite(jobAd.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)" 
-                                   Color="@(IsFavorite(jobAd.Id) ? Color.Error : Color.Default)" 
-                                   Size="Size.Small"
-                                   OnClick="@(() => ToggleFavorite(jobAd.Id))"
-                                   Title="@(IsFavorite(jobAd.Id) ? "Remove from favorites" : "Save to favorites")"/>
-                </div>
-                
-                <MudCardContent Class="py-3">
-                    <MudGrid>
-                        <MudItem xs="12" sm="2" Class="d-flex align-items-center justify-content-center">
-                            <MudAvatar Size="Size.Medium" Color="@GetAvatarColor(jobAd)">
-                                <MudIcon Icon="@GetAvatarIcon(jobAd)" Size="Size.Medium"/>
-                            </MudAvatar>
-                        </MudItem>
-                        <MudItem xs="12" sm="10">
-                            <MudStack Spacing="1">
-                                <MudText Typo="Typo.subtitle1" Class="fw-bold">@jobAd.Title</MudText>
 
-                                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Class="flex-wrap">
-                                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LocationOn">
-                                        @jobAd.Location
-                                    </MudChip>
-                                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.Work" Color="@GetWorkTypeChipColor(jobAd)">
-                                        @jobAd.WorkType
-                                    </MudChip>
-                                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.HomeWork" Color="Color.Success">
-                                        @jobAd.WorkMode
-                                    </MudChip>
-                                    @if (jobAd.SalaryMin.HasValue && jobAd.SalaryMax.HasValue)
-                                    {
-                                        <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Warning">
-                                            @($"{jobAd.SalaryMin:N0} - {jobAd.SalaryMax:N0}")
+                    <MudCardContent Class="py-3">
+                        <MudGrid>
+                            <MudItem xs="12" sm="2" Class="d-flex align-items-center justify-content-center">
+                                <MudAvatar Size="Size.Medium" Color="@GetAvatarColor(jobAd)">
+                                    <MudIcon Icon="@GetAvatarIcon(jobAd)" Size="Size.Medium"/>
+                                </MudAvatar>
+                            </MudItem>
+                            <MudItem xs="12" sm="10">
+                                <MudStack Spacing="1">
+                                    <MudText Typo="Typo.subtitle1" Class="fw-bold">@jobAd.Title</MudText>
+
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Class="flex-wrap">
+                                        <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LocationOn">
+                                            @jobAd.Location
                                         </MudChip>
-                                    }
-                                </MudStack>
-
-                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-truncate-2">
-                                    @((MarkupString)TruncateHtml(jobAd.Description, 150))
-                                </MudText>
-
-                                @if (jobAd.TechStack.Any())
-                                {
-                                    <MudStack Row="true" Spacing="1" Class="flex-wrap mt-1">
-                                        @foreach (var skill in jobAd.TechStack.Take(4))
+                                        <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.Work" Color="@GetWorkTypeChipColor(jobAd)">
+                                            @jobAd.WorkType
+                                        </MudChip>
+                                        <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.HomeWork" Color="Color.Success">
+                                            @jobAd.WorkMode
+                                        </MudChip>
+                                        @if (jobAd.SalaryMin.HasValue && jobAd.SalaryMax.HasValue)
                                         {
-                                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">
-                                                @skill
-                                            </MudChip>
-                                        }
-                                        @if (jobAd.TechStack.Count > 4)
-                                        {
-                                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text">
-                                                +@(jobAd.TechStack.Count - 4) more
+                                            <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Warning">
+                                                @($"{jobAd.SalaryMin:N0} - {jobAd.SalaryMax:N0}")
                                             </MudChip>
                                         }
                                     </MudStack>
-                                }
-                            </MudStack>
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-        }
 
-        <!-- Pagination Controls -->
-        <MudPaper Class="d-flex justify-content-center align-items-center pa-4 mt-4" Elevation="0">
-            <MudPagination 
-                Count="@totalPages" 
-                Selected="@currentPage" 
-                SelectedChanged="OnPageChanged"
-                ShowFirstButton="true"
-                ShowLastButton="true"
-                ShowPreviousButton="true"
-                ShowNextButton="true"
-                BoundaryCount="1"
-                MiddleCount="3"
-                Color="Color.Primary"
-                Size="Size.Large"/>
-        </MudPaper>
-    }
-</MudContainer>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-truncate-2">
+                                        @((MarkupString)TruncateHtml(jobAd.Description, DescriptionTruncateLength))
+                                    </MudText>
+
+                                    @if (jobAd.TechStack.Any())
+                                    {
+                                        <MudStack Row="true" Spacing="1" Class="flex-wrap mt-1">
+                                            @foreach (var skill in jobAd.TechStack.Take(MaxVisibleTechStackSkills))
+                                            {
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">
+                                                    @skill
+                                                </MudChip>
+                                            }
+                                            @if (jobAd.TechStack.Count > MaxVisibleTechStackSkills)
+                                            {
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">
+                                                    +@(jobAd.TechStack.Count - MaxVisibleTechStackSkills) more
+                                                </MudChip>
+                                            }
+                                        </MudStack>
+                                    }
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            }
+
+            <!-- Pagination Controls -->
+            <MudPaper Class="d-flex justify-content-center align-items-center pa-4 mt-4" Elevation="0">
+                <MudPagination
+                    Count="@totalPages"
+                    Selected="@currentPage"
+                    SelectedChanged="OnPageChanged"
+                    ShowFirstButton="true"
+                    ShowLastButton="true"
+                    ShowPreviousButton="true"
+                    ShowNextButton="true"
+                    BoundaryCount="1"
+                    MiddleCount="3"
+                    Color="Color.Primary"
+                    Size="Size.Large"/>
+            </MudPaper>
+        }
+    </main>
+</div>
 
 <style>
+    .job-listing-layout {
+        display: flex;
+        gap: 1.5rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .filters-sidebar {
+        flex: 0 0 300px;
+        position: sticky;
+        top: 80px;
+        height: fit-content;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    .job-listings-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Mobile responsive */
+    @@media (max-width: 960px) {
+        .job-listing-layout {
+            flex-direction: column;
+        }
+
+        .filters-sidebar {
+            position: relative;
+            top: 0;
+            flex: 1 1 auto;
+            max-height: none;
+        }
+    }
+
     .text-truncate-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -316,6 +355,25 @@
     .mud-card:hover .favorite-button {
         opacity: 1;
     }
+
+    /* Scrollbar styling for sidebar */
+    .filters-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .filters-sidebar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .filters-sidebar::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .filters-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 </style>
 
 @code {
@@ -323,6 +381,10 @@
     private List<JobAd> filteredJobAds = new();
     private List<JobAd> pagedJobAds = new();
     private bool isLoading = true;
+
+    // Constants for magic numbers
+    private const int MaxVisibleTechStackSkills = 4;
+    private const int DescriptionTruncateLength = 150;
 
     // Filter parameters
     private string searchText = string.Empty;
@@ -351,6 +413,30 @@
         jobAds = await JobAdService.GetAllJobAdsAsync();
         ApplyFilters();
         isLoading = false;
+    }
+
+    private void OnMinSalaryChanged(decimal? value)
+    {
+        minSalary = value;
+        ApplyFilters();
+    }
+
+    private void OnMaxSalaryChanged(decimal? value)
+    {
+        maxSalary = value;
+        ApplyFilters();
+    }
+
+    private void OnWorkTypeFiltersChanged(IEnumerable<WorkType> values)
+    {
+        workTypeFilters = values;
+        ApplyFilters();
+    }
+
+    private void OnWorkModeFiltersChanged(IEnumerable<WorkMode> values)
+    {
+        workModeFilters = values;
+        ApplyFilters();
     }
 
     private void ApplyFilters()
@@ -382,12 +468,20 @@
             if (workModeFilters.Any() && !workModeFilters.Contains(job.WorkMode))
                 return false;
 
-            // Salary range filter
-            if (minSalary.HasValue && job.SalaryMax < minSalary.Value)
-                return false;
+            // Salary range filter - check if ranges overlap
+            if (minSalary.HasValue || maxSalary.HasValue)
+            {
+                // Skip jobs without salary information when filtering by salary
+                if (!job.SalaryMin.HasValue || !job.SalaryMax.HasValue)
+                    return false;
 
-            if (maxSalary.HasValue && job.SalaryMin > maxSalary.Value)
-                return false;
+                // Check if the job's salary range overlaps with the filter range
+                if (minSalary.HasValue && job.SalaryMax.Value < minSalary.Value)
+                    return false;
+
+                if (maxSalary.HasValue && job.SalaryMin.Value > maxSalary.Value)
+                    return false;
+            }
 
             return true;
         }).ToList();
@@ -414,9 +508,6 @@
     {
         currentPage = page;
         UpdatePagedJobAds();
-        
-        // Optional: Scroll to top when page changes
-        StateHasChanged();
     }
 
     private void UpdatePagedJobAds()
@@ -426,8 +517,6 @@
             .Skip(skip)
             .Take(itemsPerPage)
             .ToList();
-
-        StateHasChanged();
     }
 
     private int GetStartIndex()
@@ -443,7 +532,7 @@
         return Math.Min(end, filteredJobAds.Count);
     }
 
-    private string TruncateHtml(string html, int maxLength)
+    private string TruncateHtml(string? html, int maxLength)
     {
         if (string.IsNullOrEmpty(html))
             return string.Empty;
