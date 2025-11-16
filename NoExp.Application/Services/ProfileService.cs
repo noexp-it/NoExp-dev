@@ -17,7 +17,7 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
         return await profileRepository.GetEmployerProfileByUserIdAsync(userId);
     }
 
-    public async Task<CandidateProfile> GetCandidateProfileByUserIdAsync(string userId)
+    public async Task<CandidateProfile?> GetCandidateProfileByUserIdAsync(string userId)
     {
         return await profileRepository.GetCandidateProfileByUserIdAsync(userId);
     }

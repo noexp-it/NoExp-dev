@@ -20,9 +20,9 @@ public class ProfileRepository(ApplicationDbContext context) : IProfileRepositor
         return await context.EmployerProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
     }
 
-    public async Task<CandidateProfile> GetCandidateProfileByUserIdAsync(string userId)
+    public async Task<CandidateProfile?> GetCandidateProfileByUserIdAsync(string userId)
     {
-        return await context.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId)!;
+        return await context.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
     }
 
     public async Task<EmployerProfile> UpdateEmployerProfileAsync(EmployerProfile updatedProfile)

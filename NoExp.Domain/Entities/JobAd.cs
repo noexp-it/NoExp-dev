@@ -29,7 +29,7 @@ public class JobAd
 
     public WorkStatus WorkStatus { get; set; } = WorkStatus.Inactive;
 
-    public string EmployerProfileId { get; set; }
+    public required string EmployerProfileId { get; set; }
 
-    public virtual EmployerProfile EmployerProfile { get; set; }
+    public required virtual EmployerProfile EmployerProfile { get; set; }
 }

@@ -7,9 +7,9 @@ public interface IProfileService
 {
     public Task<UserProfile> SaveProfileAsync(UserProfile userProfile);
 
-    public Task<EmployerProfile> GetEmployerProfileByUserIdAsync(string userId);
+    public Task<EmployerProfile?> GetEmployerProfileByUserIdAsync(string userId);
 
-    public Task<CandidateProfile> GetCandidateProfileByUserIdAsync(string userId);
+    public Task<CandidateProfile?> GetCandidateProfileByUserIdAsync(string userId);
 
     public Task<EmployerProfile> UpdateEmployerProfileAsync(EmployerProfile updatedEmployerProfile);
 }
