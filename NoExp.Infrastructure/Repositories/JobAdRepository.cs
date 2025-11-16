@@ -28,7 +28,7 @@ public class JobAdRepository(ApplicationDbContext context) : IJobAdRepository
         return jobAds;
     }
 
-    public async Task<JobAd> GetJobAdByIdAsync(Guid jobAdId)
+    public async Task<JobAd?> GetJobAdByIdAsync(Guid jobAdId)
     {
         return await context.JobAds
             .Include(i => i.EmployerProfile)

@@ -10,5 +10,5 @@ public interface IJobAdRepository
 
     Task<List<JobAd>> GetJobAdsByEmployerProfileIdAsync(string employerProfileId);
 
-    Task<JobAd> GetJobAdByIdAsync(Guid jobAdId);
+    Task<JobAd?> GetJobAdByIdAsync(Guid jobAdId);
 }
