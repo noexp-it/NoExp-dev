@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+namespace NoExp.Application.Validators;
+
 public class GreaterThanAttribute(string comparisonProperty) : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
