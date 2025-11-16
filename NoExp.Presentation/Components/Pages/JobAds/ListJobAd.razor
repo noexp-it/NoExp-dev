@@ -165,11 +165,11 @@
                 
                 @* Favorite Button *@
                 <div class="favorite-button" @onclick:stopPropagation="true">
-                    <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" 
-                                   Color="Color.Default" 
+                    <MudIconButton Icon="@(IsFavorite(jobAd.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)" 
+                                   Color="@(IsFavorite(jobAd.Id) ? Color.Error : Color.Default)" 
                                    Size="Size.Small"
                                    OnClick="@(() => ToggleFavorite(jobAd.Id))"
-                                   Title="Save to favorites"/>
+                                   Title="@(IsFavorite(jobAd.Id) ? "Remove from favorites" : "Save to favorites")"/>
                 </div>
                 
                 <MudCardContent Class="py-3">
@@ -337,6 +337,9 @@
     private int itemsPerPage = 10;
     private int totalPages => (int)Math.Ceiling((double)filteredJobAds.Count / itemsPerPage);
 
+    // Favorites tracking
+    private HashSet<Guid> favoriteJobIds = new();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadJobAdsAsync();
@@ -498,13 +501,27 @@
         };
     }
 
+    // Check if a job is favorited
+    private bool IsFavorite(Guid jobAdId)
+    {
+        return favoriteJobIds.Contains(jobAdId);
+    }
+
     // Handle favorite toggle
     private void ToggleFavorite(Guid jobAdId)
     {
-        // TODO: Implement favorite functionality
+        if (favoriteJobIds.Contains(jobAdId))
+        {
+            favoriteJobIds.Remove(jobAdId);
+        }
+        else
+        {
+            favoriteJobIds.Add(jobAdId);
+        }
+        
+        // TODO: Implement favorite functionality with backend service
         // This will save/remove the job from user's favorites
-        // For now, just prevent navigation
-        Console.WriteLine($"Favorite toggled for job: {jobAdId}");
+        StateHasChanged();
     }
 
     // Navigate to job details
