@@ -86,25 +86,38 @@
                                  AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
             </MudItem>
 
-            <!-- Action Buttons -->
-            <MudItem xs="12" Class="d-flex justify-content-between align-items-center">
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.FilterList"
-                           OnClick="ApplyFilters">
-                    Apply Filters
-                </MudButton>
+            <!-- Action Buttons and Results Info -->
+            <MudItem xs="12" Class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.FilterList"
+                               OnClick="ApplyFilters">
+                        Apply Filters
+                    </MudButton>
 
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Secondary"
-                           StartIcon="@Icons.Material.Filled.Clear"
-                           OnClick="ClearFilters">
-                    Clear All
-                </MudButton>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Clear"
+                               OnClick="ClearFilters">
+                        Clear All
+                    </MudButton>
+                </MudStack>
 
-                <MudText Typo="Typo.body2" Color="Color.Secondary">
-                    <strong>@filteredJobAds.Count</strong> jobs found
-                </MudText>
+                <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        <strong>@filteredJobAds.Count</strong> jobs found
+                    </MudText>
+
+                    <!-- Items per page selector -->
+                    <MudSelect T="int" @bind-Value="itemsPerPage" Label="Per page" Variant="Variant.Outlined" Dense="true" Style="min-width: 100px;">
+                        <MudSelectItem Value="5">5</MudSelectItem>
+                        <MudSelectItem Value="10">10</MudSelectItem>
+                        <MudSelectItem Value="15">15</MudSelectItem>
+                        <MudSelectItem Value="20">20</MudSelectItem>
+                        <MudSelectItem Value="50">50</MudSelectItem>
+                    </MudSelect>
+                </MudStack>
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -124,7 +137,12 @@
     }
     else
     {
-        @foreach (var jobAd in filteredJobAds)
+        <!-- Paginated Results Info -->
+        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3">
+            Showing @GetStartIndex() - @GetEndIndex() of @filteredJobAds.Count results
+        </MudText>
+
+        @foreach (var jobAd in pagedJobAds)
         {
             <a href="@($"/JobAds/Details/{jobAd.Id}")" class="text-decoration-none">
                 <MudCard Class="mb-3" Elevation="2" Style="cursor: pointer; transition: all 0.3s;">
@@ -190,6 +208,22 @@
                 </MudCard>
             </a>
         }
+
+        <!-- Pagination Controls -->
+        <MudPaper Class="d-flex justify-content-center align-items-center pa-4 mt-4" Elevation="0">
+            <MudPagination 
+                Count="@totalPages" 
+                Selected="@currentPage" 
+                SelectedChanged="OnPageChanged"
+                ShowFirstButton="true"
+                ShowLastButton="true"
+                ShowPreviousButton="true"
+                ShowNextButton="true"
+                BoundaryCount="1"
+                MiddleCount="3"
+                Color="Color.Primary"
+                Size="Size.Large"/>
+        </MudPaper>
     }
 </MudContainer>
 
@@ -206,6 +240,7 @@
 @code {
     private List<JobAd> jobAds = new();
     private List<JobAd> filteredJobAds = new();
+    private List<JobAd> pagedJobAds = new();
     private bool isLoading = true;
 
     // Filter parameters
@@ -215,6 +250,11 @@
     private WorkMode? workModeFilter;
     private decimal? minSalary;
     private decimal? maxSalary;
+
+    // Pagination parameters
+    private int currentPage = 1;
+    private int itemsPerPage = 10;
+    private int totalPages => (int)Math.Ceiling((double)filteredJobAds.Count / itemsPerPage);
 
     protected override async Task OnInitializedAsync()
     {
@@ -268,7 +308,9 @@
             return true;
         }).ToList();
 
-        StateHasChanged();
+        // Reset to first page when filters change
+        currentPage = 1;
+        UpdatePagedJobAds();
     }
 
     private void ClearFilters()
@@ -279,8 +321,42 @@
         workModeFilter = null;
         minSalary = null;
         maxSalary = null;
+        currentPage = 1;
 
         ApplyFilters();
+    }
+
+    private void OnPageChanged(int page)
+    {
+        currentPage = page;
+        UpdatePagedJobAds();
+        
+        // Optional: Scroll to top when page changes
+        StateHasChanged();
+    }
+
+    private void UpdatePagedJobAds()
+    {
+        var skip = (currentPage - 1) * itemsPerPage;
+        pagedJobAds = filteredJobAds
+            .Skip(skip)
+            .Take(itemsPerPage)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private int GetStartIndex()
+    {
+        if (!filteredJobAds.Any()) return 0;
+        return ((currentPage - 1) * itemsPerPage) + 1;
+    }
+
+    private int GetEndIndex()
+    {
+        if (!filteredJobAds.Any()) return 0;
+        var end = currentPage * itemsPerPage;
+        return Math.Min(end, filteredJobAds.Count);
     }
 
     private string TruncateHtml(string html, int maxLength)
