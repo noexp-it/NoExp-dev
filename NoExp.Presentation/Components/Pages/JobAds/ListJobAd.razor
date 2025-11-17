@@ -106,7 +106,7 @@
 
             <!-- Items per page selector -->
             <MudText Typo="Typo.subtitle2" Class="mb-2">Items per page</MudText>
-            <MudSelect T="int" @bind-Value="itemsPerPage" Variant="Variant.Outlined" Dense="true" FullWidth="true" Class="mb-4">
+            <MudSelect T="int" Value="@itemsPerPage" ValueChanged="@OnItemsPerPageChanged" Variant="Variant.Outlined" Dense="true" FullWidth="true" Class="mb-4">
                 <MudSelectItem Value="5">5</MudSelectItem>
                 <MudSelectItem Value="10">10</MudSelectItem>
                 <MudSelectItem Value="15">15</MudSelectItem>
@@ -127,13 +127,6 @@
 
     <!-- Right Content Area with Job Listings -->
     <main class="job-listings-content">
-        <!-- Top Bar with Results Info -->
-        <MudPaper Class="pa-3 mb-4 d-flex justify-content-between align-items-center flex-wrap" Elevation="1">
-            <MudText Typo="Typo.body1" Color="Color.Secondary">
-                <strong>@filteredJobAds.Count</strong> jobs found
-            </MudText>
-        </MudPaper>
-
         <!-- Job Ads List -->
         @if (isLoading)
         {
@@ -533,6 +526,13 @@
     private void OnPageChanged(int page)
     {
         currentPage = page;
+        UpdatePagedJobAds();
+    }
+
+    private void OnItemsPerPageChanged(int newItemsPerPage)
+    {
+        itemsPerPage = newItemsPerPage;
+        currentPage = 1; // Reset to first page when changing items per page
         UpdatePagedJobAds();
     }
 
