@@ -411,20 +411,20 @@
     {
         isLoading = true;
         jobAds = await JobAdService.GetAllJobAdsAsync();
-        ApplyFilters();
+        await ApplyFiltersThrottled();
         isLoading = false;
     }
 
-    private void OnMinSalaryChanged(decimal? value)
+    private async void OnMinSalaryChanged(decimal? value)
     {
         minSalary = value;
-        ApplyFilters();
+        await ApplyFiltersThrottled();
     }
 
-    private void OnMaxSalaryChanged(decimal? value)
+    private async void OnMaxSalaryChanged(decimal? value)
     {
         maxSalary = value;
-        ApplyFilters();
+        await ApplyFiltersThrottled();
     }
 
     private async Task OnWorkTypeFiltersChanged(IEnumerable<WorkType> values)
@@ -510,7 +510,7 @@
         UpdatePagedJobAds();
     }
 
-    private void ClearFilters()
+    private async void ClearFilters()
     {
         searchText = string.Empty;
         locationFilter = string.Empty;
@@ -520,7 +520,7 @@
         maxSalary = null;
         currentPage = 1;
 
-        ApplyFilters();
+        await ApplyFiltersThrottled();
     }
 
     private void OnPageChanged(int page)
@@ -636,7 +636,6 @@
         
         // TODO: Implement favorite functionality with backend service
         // This will save/remove the job from user's favorites
-        StateHasChanged();
     }
 
     // Navigate to job details
