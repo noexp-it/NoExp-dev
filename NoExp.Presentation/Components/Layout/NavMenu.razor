@@ -39,19 +39,11 @@
             </MudMenu>
         </Authorized>
         <NotAuthorized>
-            <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Class="user-avatar-menu">
-                <ActivatorContent>
-                    <MudAvatar Color="Color.Default" Size="Size.Large" Class="avatar-button">
-                        <MudIcon Icon="@Icons.Material.Filled.Person" />
-                    </MudAvatar>
-                </ActivatorContent>
-                <ChildContent>
-                    <MudMenuItem Href="/" Icon="@Icons.Material.Filled.Home">Home</MudMenuItem>
-                    <MudDivider />
-                    <MudMenuItem Href="Account/Register" Icon="@Icons.Material.Filled.PersonAdd">Register</MudMenuItem>
-                    <MudMenuItem Href="Account/Login" Icon="@Icons.Material.Filled.Login">Login</MudMenuItem>
-                </ChildContent>
-            </MudMenu>
+            <MudLink Href="@GetLoginUrl()" Underline="Underline.None">
+                <MudAvatar Color="Color.Default" Size="Size.Large" Class="avatar-button" Style="cursor: pointer;">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" />
+                </MudAvatar>
+            </MudLink>
         </NotAuthorized>
     </AuthorizeView>
 </div>
@@ -75,6 +67,12 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
+    }
+
+    private string GetLoginUrl()
+    {
+        var returnUrl = Uri.EscapeDataString(NavigationManager.Uri);
+        return $"/Account/Login?returnUrl={returnUrl}";
     }
 
     private string GetUserInitials(string? userName)
