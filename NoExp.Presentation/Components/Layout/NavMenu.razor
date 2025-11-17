@@ -5,7 +5,7 @@
 
 <MudAppBar Elevation="1" Dense="true">
     <MudLink Href="/" Underline="Underline.None">
-        <MudImage Src="images/logo.png" Alt="Logo" Height="40" ObjectFit="ObjectFit.Contain" Class="mr-3"/>
+        <MudImage Src="images/logo.png" Alt="NoExp.IT Logo Home" Height="40" ObjectFit="ObjectFit.Contain" Class="mr-3"/>
     </MudLink>
     
     <MudSpacer />
@@ -53,7 +53,7 @@
     </MudHidden>
     
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <MudMenu Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight">
+        <MudMenu Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" AriaLabel="Navigation menu">
             <MudMenuItem Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudMenuItem>
             
             <AuthorizeView Roles="EmployerRole">

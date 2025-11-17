@@ -266,6 +266,9 @@
         height: fit-content;
         max-height: calc(100vh - 100px);
         overflow-y: auto;
+        /* Firefox scrollbar styling */
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f1f1f1;
     }
 
     .job-listings-content {
@@ -356,7 +359,7 @@
         opacity: 1;
     }
 
-    /* Scrollbar styling for sidebar */
+    /* Webkit browsers (Chrome, Safari, Edge) scrollbar styling */
     .filters-sidebar::-webkit-scrollbar {
         width: 6px;
     }
@@ -402,6 +405,10 @@
     // Favorites tracking
     private HashSet<Guid> favoriteJobIds = new();
 
+    private DateTime _lastFilterApplied = DateTime.MinValue;
+    private bool _pendingFilterUpdate = false;
+    private const int ThrottleMs = 200;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadJobAdsAsync();
@@ -427,16 +434,35 @@
         ApplyFilters();
     }
 
-    private void OnWorkTypeFiltersChanged(IEnumerable<WorkType> values)
+    private async Task OnWorkTypeFiltersChanged(IEnumerable<WorkType> values)
     {
         workTypeFilters = values;
-        ApplyFilters();
+        await ApplyFiltersThrottled();
     }
 
-    private void OnWorkModeFiltersChanged(IEnumerable<WorkMode> values)
+    private async Task OnWorkModeFiltersChanged(IEnumerable<WorkMode> values)
     {
         workModeFilters = values;
-        ApplyFilters();
+        await ApplyFiltersThrottled();
+    }
+
+    private async Task ApplyFiltersThrottled()
+    {
+        var timeSinceLastApply = (DateTime.Now - _lastFilterApplied).TotalMilliseconds;
+        
+        if (timeSinceLastApply >= ThrottleMs)
+        {
+            ApplyFilters();
+            _lastFilterApplied = DateTime.Now;
+        }
+        else if (!_pendingFilterUpdate)
+        {
+            _pendingFilterUpdate = true;
+            await Task.Delay(ThrottleMs - (int)timeSinceLastApply);
+            ApplyFilters();
+            _lastFilterApplied = DateTime.Now;
+            _pendingFilterUpdate = false;
+        }
     }
 
     private void ApplyFilters()
