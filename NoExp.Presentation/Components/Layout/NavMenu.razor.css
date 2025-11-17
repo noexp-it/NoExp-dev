@@ -104,6 +104,95 @@
     transform: rotate(90deg);
 }
 
+/* Floating user menu styling */
+.floating-user-menu {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+}
+
+.user-avatar-menu {
+    cursor: pointer;
+}
+
+.avatar-button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.avatar-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.avatar-button:active {
+    transform: scale(1.05);
+}
+
+/* Floating logo styling */
+.floating-logo {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    transition: all 0.3s ease;
+}
+
+.floating-logo:hover {
+    transform: scale(1.05);
+}
+
+/* User menu dropdown styling */
+::deep .user-avatar-menu .mud-popover-paper {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    margin-top: 12px;
+    min-width: 220px;
+    padding: 8px 0;
+}
+
+.user-menu-header {
+    padding: 12px 16px 8px 16px;
+}
+
+::deep .user-avatar-menu .mud-list-item {
+    border-radius: 8px;
+    margin: 4px 8px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+}
+
+::deep .user-avatar-menu .mud-list-item:hover {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    transform: translateX(4px);
+}
+
+::deep .user-avatar-menu .mud-list-item-icon {
+    min-width: 36px;
+}
+
+::deep .user-avatar-menu .mud-list-item-text {
+    font-weight: 500;
+}
+
+/* Divider styling */
+::deep .user-avatar-menu .mud-divider {
+    margin: 8px 12px;
+    opacity: 0.6;
+}
+
+/* Logout button styling in menu */
+::deep .user-avatar-menu .mud-button-root {
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
 /* Original styles preserved below */
 .navbar-toggler {
     appearance: none;
@@ -228,5 +317,42 @@
         /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .floating-user-menu {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .floating-logo {
+        top: 15px;
+        left: 15px;
+    }
+    
+    .avatar-button {
+        width: 44px !important;
+        height: 44px !important;
+    }
+    
+    ::deep .floating-logo .mud-image {
+        height: 40px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-user-menu {
+        top: 12px;
+        right: 12px;
+    }
+    
+    .floating-logo {
+        top: 12px;
+        left: 12px;
+    }
+    
+    ::deep .user-avatar-menu .mud-popover-paper {
+        min-width: 180px;
     }
 }
