@@ -11,8 +11,8 @@
     <MudSpacer />
     
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-        <MudLink Href="/dashboard" Color="Color.Inherit" Class="mx-2">
-            <MudButton Color="Color.Inherit" StartIcon="@Icons.Material.Filled.Dashboard">Dashboard</MudButton>
+        <MudLink Href="/" Color="Color.Inherit" Class="mx-2">
+            <MudButton Color="Color.Inherit" StartIcon="@Icons.Material.Filled.Dashboard">Home</MudButton>
         </MudLink>
         
         <AuthorizeView Roles="EmployerRole">
@@ -43,10 +43,10 @@
             </Authorized>
             <NotAuthorized>
                 <MudLink Href="Account/Register" Color="Color.Inherit" Class="mx-2">
-                    <MudButton Color="Color.Info" StartIcon="@Icons.Material.Filled.PersonAdd">Register</MudButton>
+                    <MudButton Color="Color.Inherit" StartIcon="@Icons.Material.Filled.PersonAdd">Register</MudButton>
                 </MudLink>
                 <MudLink Href="Account/Login" Color="Color.Inherit" Class="mx-2">
-                    <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+                    <MudButton Color="Color.Inherit" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
                 </MudLink>
             </NotAuthorized>
         </AuthorizeView>
