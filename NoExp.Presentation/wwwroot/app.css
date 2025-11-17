@@ -41,8 +41,8 @@ h1:focus {
 }
 
 .blazor-error-boundary::before {
-    content: "warning";
-    font-family: 'Material Icons' !important;
+    content: "\e002";
+    font-family: 'Material Icons Outlined' !important;
     position: absolute;
     left: 1rem;
     top: 50%;
