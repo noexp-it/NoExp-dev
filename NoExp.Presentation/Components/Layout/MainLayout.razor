@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject NavigationManager NavigationManager
 
 @* Required *@
 <MudThemeProvider @rendermode="InteractiveServer"/>
@@ -14,7 +16,7 @@
     <NavMenu/>
 
     <main>
-        <article class="content px-4">
+        <article class="content px-4 @(IsAccountPage() ? "account-page" : "")">
             @Body
         </article>
     </main>
@@ -25,3 +27,26 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private bool IsAccountPage()
+    {
+        var path = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        return path.StartsWith("Account/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

@@ -17,7 +17,6 @@
                         <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@authContext.User.Identity?.Name</MudText>
                     </div>
                     <MudDivider />
-                    <MudMenuItem Href="/" Icon="@Icons.Material.Filled.Home">Home</MudMenuItem>
                     <AuthorizeView Roles="EmployerRole" Context="employerContext">
                         <MudDivider />
                         <MudMenuItem Href="/JobAds/Own" Icon="@Icons.Material.Filled.ViewList">Your Job Ads</MudMenuItem>

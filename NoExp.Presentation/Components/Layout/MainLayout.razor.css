@@ -20,11 +20,20 @@ main {
     padding-top: 5rem;
 }
 
+/* Add extra top padding for Account pages to avoid overlay with floating navigation */
+.content.account-page {
+    padding-top: 8rem !important;
+}
+
 @media (min-width: 1200px) {
     .content {
         padding-left: 6rem !important;
         padding-right: 6rem !important;
         padding-top: 5rem !important;
+    }
+    
+    .content.account-page {
+        padding-top: 9rem !important;
     }
 }
 
@@ -34,11 +43,19 @@ main {
         padding-right: 10rem !important;
         padding-top: 5rem !important;
     }
+    
+    .content.account-page {
+        padding-top: 9rem !important;
+    }
 }
 
 @media (max-width: 640.98px) {
     .content {
         padding-top: 4rem !important;
+    }
+    
+    .content.account-page {
+        padding-top: 7rem !important;
     }
 }
 
