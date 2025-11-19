@@ -150,6 +150,7 @@
 
             @foreach (var jobAd in pagedJobAds)
             {
+                var isFavorite = IsFavorite(jobAd.Id);
                 <MudCard Class="@GetJobCardClass(jobAd)" Elevation="2" Style="cursor: pointer; transition: all 0.3s; position: relative;" @onclick="@(() => NavigateToJobDetails(jobAd.Id))">
                     @* Special Badge for Practice/Internship *@
                     @if (jobAd.WorkType == WorkType.Practice || jobAd.WorkType == WorkType.Internship)
@@ -162,8 +163,8 @@
 
                     @* Favorite Button *@
                     <div class="favorite-button" @onclick:stopPropagation="true">
-                        <MudIconButton Icon="@(IsFavorite(jobAd.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
-                                       Color="@(IsFavorite(jobAd.Id) ? Color.Error : Color.Default)"
+                        <MudIconButton Icon="@(isFavorite ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
+                                       Color="@(isFavorite ? Color.Error : Color.Default)"
                                        Size="Size.Small"
                                        OnClick="@(() => ToggleFavorite(jobAd.Id))"/>
                     </div>
