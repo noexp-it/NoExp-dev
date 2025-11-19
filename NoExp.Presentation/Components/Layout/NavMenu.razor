@@ -3,46 +3,55 @@
 
 @inject NavigationManager NavigationManager
 
-<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
-    <MudNavMenu Class="mud-width-full">
-        <img src="images/logo.png" alt="Logo" style="max-width: 100%; max-height: 150px; object-fit: contain;"/>
-        <MudDivider Class="my-2"/>
-        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-        <AuthorizeView Roles="EmployerRole">
-            <MudNavGroup Title="Job Ads" Expanded="false" Icon="@Icons.Material.Filled.Storage">
-                <MudNavLink Href="/JobAds/Own" Icon="@Icons.Material.Filled.ViewList">Your Job Ads</MudNavLink>
-                <MudNavLink Href="/JobAds/Create" Icon="@Icons.Material.Filled.AddCircle">Add JobAd</MudNavLink>
-            </MudNavGroup>
-        </AuthorizeView>
-        <AuthorizeView>
-            <Authorized>
-                <MudNavGroup Title="@context.User.Identity?.Name" Icon="@Icons.Material.Filled.Person" Expanded="false">
-                    <MudButton Href="Account/Manage" Color="Color.Info" StartIcon="@Icons.Material.Filled.People"
-                               Style="width:100%; text-align:left;">
-                        Profile
-                    </MudButton>
-                    <MudItem>
-                        <form action="Account/Logout" method="post" style="margin:0; padding:0;">
+<div class="floating-user-menu">
+    <AuthorizeView>
+        <Authorized Context="authContext">
+            <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Class="user-avatar-menu">
+                <ActivatorContent>
+                    <MudAvatar Color="Color.Primary" Size="Size.Large" Class="avatar-button">
+                        @GetUserInitials(authContext.User.Identity?.Name)
+                    </MudAvatar>
+                </ActivatorContent>
+                <ChildContent>
+                    <div class="user-menu-header">
+                        <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@authContext.User.Identity?.Name</MudText>
+                    </div>
+                    <MudDivider />
+                    <AuthorizeView Roles="EmployerRole" Context="employerContext">
+                        <MudDivider />
+                        <MudMenuItem Href="/JobAds/Own" Icon="@Icons.Material.Filled.ViewList">Your Job Ads</MudMenuItem>
+                        <MudMenuItem Href="/JobAds/Create" Icon="@Icons.Material.Filled.AddCircle">Add Job Ad</MudMenuItem>
+                    </AuthorizeView>
+                    <MudDivider />
+                    <MudMenuItem Href="Account/Manage" Icon="@Icons.Material.Filled.Person">Profile</MudMenuItem>
+                    <MudMenuItem>
+                        <form action="Account/Logout" method="post" style="margin:0; padding:0; width:100%;">
                             <AntiforgeryToken/>
                             <input type="hidden" name="ReturnUrl" value="@currentUrl"/>
-                            <MudButton ButtonType="ButtonType.Submit" Color="Color.Error"
-                                       StartIcon="@Icons.Material.Filled.Logout" Style="width:100%; text-align:left;">
+                            <MudButton ButtonType="ButtonType.Submit" Color="Color.Error" FullWidth="true"
+                                       StartIcon="@Icons.Material.Filled.Logout" Style="justify-content: flex-start; text-transform: none;">
                                 Logout
                             </MudButton>
                         </form>
-                    </MudItem>
-                </MudNavGroup>
-            </Authorized>
-            <NotAuthorized>
-                <MudNavLink Href="Account/Register" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">
-                    Register
-                </MudNavLink>
-                <MudNavLink Href="Account/Login" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">Login
-                </MudNavLink>
-            </NotAuthorized>
-        </AuthorizeView>
-    </MudNavMenu>
-</MudPaper>
+                    </MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+        </Authorized>
+        <NotAuthorized>
+            <MudLink Href="@GetLoginUrl()" Underline="Underline.None">
+                <MudAvatar Color="Color.Default" Size="Size.Large" Class="avatar-button" Style="cursor: pointer;">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" />
+                </MudAvatar>
+            </MudLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<div class="floating-logo">
+    <MudLink Href="/" Underline="Underline.None">
+        <MudImage Src="images/logo.png" Alt="NoExp.IT Logo Home" Height="80" ObjectFit="ObjectFit.Contain"/>
+    </MudLink>
+</div>
 
 @code {
     private string? currentUrl;
@@ -59,10 +68,29 @@
         StateHasChanged();
     }
 
+    private string GetLoginUrl()
+    {
+        var returnUrl = Uri.EscapeDataString(NavigationManager.Uri);
+        return $"/Account/Login?returnUrl={returnUrl}";
+    }
+
+    private string GetUserInitials(string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(userName))
+            return "U";
+        
+        var parts = userName.Split(' ', '@');
+        if (parts.Length >= 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        else if (!string.IsNullOrEmpty(parts[0]))
+            return parts[0][0].ToString().ToUpper();
+        else
+            return "U";
+    }
+
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
-
 }
 
