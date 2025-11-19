@@ -150,6 +150,7 @@
 
             @foreach (var jobAd in pagedJobAds)
             {
+                var isFavorite = IsFavorite(jobAd.Id);
                 <MudCard Class="@GetJobCardClass(jobAd)" Elevation="2" Style="cursor: pointer; transition: all 0.3s; position: relative;" @onclick="@(() => NavigateToJobDetails(jobAd.Id))">
                     @* Special Badge for Practice/Internship *@
                     @if (jobAd.WorkType == WorkType.Practice || jobAd.WorkType == WorkType.Internship)
@@ -162,8 +163,8 @@
 
                     @* Favorite Button *@
                     <div class="favorite-button" @onclick:stopPropagation="true">
-                        <MudIconButton Icon="@(IsFavorite(jobAd.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
-                                       Color="@(IsFavorite(jobAd.Id) ? Color.Error : Color.Default)"
+                        <MudIconButton Icon="@(isFavorite ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
+                                       Color="@(isFavorite ? Color.Error : Color.Default)"
                                        Size="Size.Small"
                                        OnClick="@(() => ToggleFavorite(jobAd.Id))"/>
                     </div>
@@ -399,9 +400,9 @@
     // Favorites tracking
     private HashSet<Guid> favoriteJobIds = new();
 
-    // Throttling with cancellation token
+    // Throttling to prevent excessive filter operations when users type quickly or change multiple filters in rapid succession, using a cancellation token
     private CancellationTokenSource? _filterCancellationTokenSource;
-    private const int ThrottleMs = 200;
+    private const int FilterThrottleDelayMilliseconds = 200;
 
     protected override async Task OnInitializedAsync()
     {
@@ -416,13 +417,13 @@
         isLoading = false;
     }
 
-    private async void OnMinSalaryChanged(decimal? value)
+    private async Task OnMinSalaryChanged(decimal? value)
     {
         minSalary = value;
         await ApplyFiltersThrottled();
     }
 
-    private async void OnMaxSalaryChanged(decimal? value)
+    private async Task OnMaxSalaryChanged(decimal? value)
     {
         maxSalary = value;
         await ApplyFiltersThrottled();
@@ -452,13 +453,13 @@
         try
         {
             // Wait for the throttle delay
-            await Task.Delay(ThrottleMs, cancellationToken);
+            await Task.Delay(FilterThrottleDelayMilliseconds, cancellationToken);
             
             // If we weren't cancelled, apply the filters
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                ApplyFilters();
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            ApplyFilters();
+            
         }
         catch (TaskCanceledException)
         {
@@ -643,6 +644,7 @@
             favoriteJobIds.Add(jobAdId);
         }
         
+        StateHasChanged();
         // TODO: Implement favorite functionality with backend service
         // This will save/remove the job from user's favorites
     }
