@@ -1,0 +1,205 @@
+/* ==========================================================================
+   REGISTRATION PAGE STYLES
+   ========================================================================== */
+
+/* Layout & Container
+   ========================================================================== */
+
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* Form Paper (Dark Theme)
+   ========================================================================== */
+
+.register-form-paper {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+}
+
+/* Input Fields
+   ========================================================================== */
+
+.register-input {
+    margin-bottom: 0.5rem;
+}
+
+/* Deep selectors for MudBlazor input components */
+::deep .register-input .mud-input-root {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+}
+
+::deep .register-input .mud-input-outlined .mud-input-root {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+::deep .register-input .mud-input-outlined:hover .mud-input-root {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+::deep .register-input .mud-input-outlined.mud-input-focused .mud-input-root {
+    border-color: #594AE2;
+}
+
+::deep .register-input .mud-input-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+::deep .register-input input {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+::deep .register-input .mud-input-adornment {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Submit Button
+   ========================================================================== */
+
+.register-button {
+    margin-top: 1rem;
+    border-radius: 12px;
+    text-transform: none;
+    font-weight: 600;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.register-button:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* User Type Section
+   ========================================================================== */
+
+.user-type-paper {
+    background: transparent;
+    padding: 2rem 1.5rem;
+}
+
+.user-type-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.user-type-buttons {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* User Type Buttons (Light Theme with Blue Accents)
+   ========================================================================== */
+
+.user-type-button {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(27, 110, 194, 0.3);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 140px;
+    max-width: 180px;
+    user-select: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.user-type-button:hover {
+    border-color: rgba(27, 110, 194, 0.6);
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(27, 110, 194, 0.2);
+}
+
+.user-type-button.selected {
+    border-color: #1b6ec2;
+    background: linear-gradient(135deg, rgba(27, 110, 194, 0.1) 0%, rgba(37, 140, 251, 0.1) 100%);
+    box-shadow: 0 4px 16px rgba(27, 110, 194, 0.3);
+}
+
+/* User Type Button - Icons */
+::deep .user-type-button .mud-icon-root {
+    color: rgba(27, 110, 194, 0.7);
+    transition: all 0.3s ease;
+}
+
+::deep .user-type-button:hover .mud-icon-root {
+    color: rgba(27, 110, 194, 0.9);
+}
+
+::deep .user-type-button.selected .mud-icon-root {
+    color: #1b6ec2;
+}
+
+/* User Type Button - Text */
+::deep .user-type-button .mud-text {
+    color: rgba(60, 60, 67, 0.85);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+::deep .user-type-button:hover .mud-text {
+    color: rgba(27, 110, 194, 0.9);
+}
+
+::deep .user-type-button.selected .mud-text {
+    color: #1b6ec2;
+    font-weight: 600;
+}
+
+/* External Login Section
+   ========================================================================== */
+
+.external-login-paper {
+    background: transparent;
+    padding: 1rem;
+}
+
+/* Divider
+   ========================================================================== */
+
+::deep .mud-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design
+   ========================================================================== */
+
+@media (max-width: 960px) {
+    .register-form-paper {
+        padding: 2rem 1.5rem;
+    }
+    
+    .user-type-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .user-type-button {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .register-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .register-form-paper {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+    
+    .user-type-paper {
+        padding: 1rem;
+    }
+}
