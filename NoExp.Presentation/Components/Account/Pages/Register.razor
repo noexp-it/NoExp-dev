@@ -25,26 +25,34 @@
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="register-container">
     <MudPaper Class="register-form-paper" Elevation="0">
-        <MudForm @ref="form" Model="Input" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+        <MudForm @ref="form" Model="Input" Validation="@(validator.ValidateValue)">
             <MudStack Spacing="4">
                 <!-- User Type Selection at the top -->
                 <div class="user-type-section">
                     <MudText Typo="Typo.h6" Class="user-type-title">Register as...</MudText>
                     
                     <MudStack Row="true" Spacing="4" Justify="Justify.Center" Class="user-type-buttons">
-                        <div class="@GetUserTypeClass("Candidate")" @onclick="@(() => SelectUserType("Candidate"))">
+                        <MudButton Variant="Variant.Outlined" 
+                                   Class="@GetUserTypeClass("Candidate")" 
+                                   OnClick="@(() => SelectUserType("Candidate"))" 
+                                   DisableElevation="false" 
+                                   Style="@GetButtonStyle("Candidate")">
                             <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large"/>
+                                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
                                 <MudText Typo="Typo.body1">Candidate</MudText>
                             </MudStack>
-                        </div>
-                        
-                        <div class="@GetUserTypeClass("Employer")" @onclick="@(() => SelectUserType("Employer"))">
+                        </MudButton>
+
+                        <MudButton Variant="Variant.Outlined" 
+                                   Class="@GetUserTypeClass("Employer")" 
+                                   OnClick="@(() => SelectUserType("Employer"))" 
+                                   DisableElevation="false" 
+                                   Style="@GetButtonStyle("Employer")">
                             <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                                <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large"/>
+                                <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large" />
                                 <MudText Typo="Typo.body1">Employer</MudText>
                             </MudStack>
-                        </div>
+                        </MudButton>
                     </MudStack>
                     
                     @if (!string.IsNullOrEmpty(_userTypeError))
@@ -62,7 +70,7 @@
                               For="@(() => Input.Email)"
                               InputType="InputType.Email"
                               AutoComplete="username"
-                              Immediate="true"
+                              DebounceInterval="300"
                               Class="register-input"/>
                 
                 <!-- Password Field -->
@@ -75,7 +83,7 @@
                               Adornment="Adornment.End"
                               AdornmentIcon="@PasswordIcon"
                               OnAdornmentClick="TogglePasswordVisibility"
-                              Immediate="true"
+                              DebounceInterval="300"
                               Class="register-input"/>
                 
                 <!-- Confirm Password Field -->
@@ -88,7 +96,7 @@
                               Adornment="Adornment.End"
                               AdornmentIcon="@ConfirmPasswordIcon"
                               OnAdornmentClick="ToggleConfirmPasswordVisibility"
-                              Immediate="true"
+                              DebounceInterval="300"
                               Class="register-input"/>
                 
                 <!-- Submit Button -->
@@ -124,11 +132,12 @@
 
 @code {
     private MudForm? form;
-    private readonly InputModelValidator validator = new();
+    private InputModelValidator? _validator;
+    private InputModelValidator validator => _validator ??= new InputModelValidator(UserManager);
     private IEnumerable<IdentityError>? identityErrors;
     private bool _isSubmitting = false;
     private string _userTypeError = string.Empty;
-    
+
     private bool _showPassword = false;
     private bool _showConfirmPassword = false;
 
@@ -138,7 +147,7 @@
 
     private InputType PasswordInputType => _showPassword ? InputType.Text : InputType.Password;
     private string PasswordIcon => _showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
-    
+
     private InputType ConfirmPasswordInputType => _showConfirmPassword ? InputType.Text : InputType.Password;
     private string ConfirmPasswordIcon => _showConfirmPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
 
@@ -146,7 +155,7 @@
     {
         _showPassword = !_showPassword;
     }
-    
+
     private void ToggleConfirmPasswordVisibility()
     {
         _showConfirmPassword = !_showConfirmPassword;
@@ -164,10 +173,58 @@
         return Input.Profile == userType ? "user-type-button selected" : "user-type-button";
     }
 
+    private string GetButtonStyle(string userType)
+    {
+        bool isSelected = Input.Profile == userType;
+        
+        if (isSelected)
+        {
+            return "min-width:0; border: 2px solid #1b6ec2; border-radius: 16px; padding: 1.5rem 2rem; " +
+                   "background: linear-gradient(135deg, rgba(27, 110, 194, 0.1) 0%, rgba(37, 140, 251, 0.1) 100%); " +
+                   "box-shadow: 0 4px 16px rgba(27, 110, 194, 0.3); text-transform: none;";
+        }
+        
+        return "min-width:0; border: 2px solid rgba(27, 110, 194, 0.3); border-radius: 16px; padding: 1.5rem 2rem; " +
+               "background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); text-transform: none;";
+    }
+
+    private static string GetRoleName(string profileType)
+    {
+        return profileType switch
+        {
+            "Candidate" => "CandidateRole",
+            "Employer" => "EmployerRole",
+            _ => throw new ArgumentException($"Invalid user type: {profileType}", nameof(profileType))
+        };
+    }
+
+    private static UserProfile CreateProfile(string profileType, string userId)
+    {
+        return profileType switch
+        {
+            "Candidate" => new CandidateProfile
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = userId
+            },
+            "Employer" => new EmployerProfile
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = userId
+            },
+            _ => throw new ArgumentException($"Invalid user type: {profileType}", nameof(profileType))
+        };
+    }
+
     private async Task OnValidSubmitAsync()
     {
         // Validate the form
-        await form!.Validate();
+        if (form == null)
+        {
+            return;
+        }
+
+        await form.Validate();
         
         var validationResult = await validator.ValidateAsync(Input);
         
@@ -210,13 +267,8 @@
                 return;
             }
 
-            // User is now saved to database, we can create the profile
-            var roleName = Input.Profile switch
-            {
-                "Candidate" => "CandidateRole",
-                "Employer" => "EmployerRole",
-                _ => throw new ArgumentException("Invalid user type")
-            };
+            // User is now saved to database, assign role
+            var roleName = GetRoleName(Input.Profile);
 
             if (!await RoleManager.RoleExistsAsync(roleName))
             {
@@ -225,21 +277,9 @@
 
             await UserManager.AddToRoleAsync(user, roleName);
 
-            // Now create the profile after user is saved
-            UserProfile profile = Input.Profile switch
-            {
-                "Candidate" => new CandidateProfile
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    UserId = user.Id
-                },
-                "Employer" => new EmployerProfile
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    UserId = user.Id
-                },
-                _ => throw new ArgumentException("Invalid user type")
-            };
+            // Create the profile after user is saved
+            var profile = CreateProfile(Input.Profile, user.Id);
+            user.UserProfile = profile;
 
             await ProfileService.SaveProfileAsync(profile);
 
@@ -316,7 +356,7 @@
     // FluentValidation Validator
     private class InputModelValidator : AbstractValidator<InputModel>
     {
-        public InputModelValidator()
+        public InputModelValidator(UserManager<ApplicationUser> userManager)
         {
             // User Type Validation
             RuleFor(x => x.Profile)
@@ -334,22 +374,39 @@
                 .MaximumLength(256)
                 .WithMessage("Email must not exceed 256 characters");
 
-            // Password Validation
+            // NOTE: The following password rules are dynamically set based on UserManager.Options.Password.
+            var passwordOptions = userManager.Options.Password;
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .WithMessage("Password is required")
-                .MinimumLength(6)
-                .WithMessage("Password must be at least 6 characters long")
-                .MaximumLength(100)
-                .WithMessage("Password must not exceed 100 characters")
-                .Matches(@"[A-Z]")
-                .WithMessage("Password must contain at least one uppercase letter")
-                .Matches(@"[a-z]")
-                .WithMessage("Password must contain at least one lowercase letter")
-                .Matches(@"[0-9]")
-                .WithMessage("Password must contain at least one number")
-                .Matches(@"[\W_]")
-                .WithMessage("Password must contain at least one special character");
+                .MinimumLength(passwordOptions.RequiredLength)
+                .WithMessage($"Password must be at least {passwordOptions.RequiredLength} characters long")
+                .MaximumLength(passwordOptions.RequiredLength > 100 ? passwordOptions.RequiredLength : 100)
+                .WithMessage($"Password must not exceed {(passwordOptions.RequiredLength > 100 ? passwordOptions.RequiredLength : 100)} characters");
+            if (passwordOptions.RequireUppercase)
+            {
+                RuleFor(x => x.Password)
+                    .Matches(@"[A-Z]")
+                    .WithMessage("Password must contain at least one uppercase letter");
+            }
+            if (passwordOptions.RequireLowercase)
+            {
+                RuleFor(x => x.Password)
+                    .Matches(@"[a-z]")
+                    .WithMessage("Password must contain at least one lowercase letter");
+            }
+            if (passwordOptions.RequireDigit)
+            {
+                RuleFor(x => x.Password)
+                    .Matches(@"[0-9]")
+                    .WithMessage("Password must contain at least one number");
+            }
+            if (passwordOptions.RequireNonAlphanumeric)
+            {
+                RuleFor(x => x.Password)
+                    .Matches(@"[\W_]")
+                    .WithMessage("Password must contain at least one special character");
+            }
 
             // Confirm Password Validation
             RuleFor(x => x.ConfirmPassword)
