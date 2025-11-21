@@ -1,6 +1,5 @@
 ﻿@page "/Account/Register"
 @rendermode InteractiveServer
-@using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
@@ -9,6 +8,8 @@
 @using NoExp.Domain.Entities
 @using NoExp.Domain.Entities.Abstracts
 @using NoExp.Infrastructure.Persistence
+@using FluentValidation
+@using MudSeverity = MudBlazor.Severity
 
 @inject UserManager<ApplicationUser> UserManager
 @inject RoleManager<IdentityRole> RoleManager
@@ -22,70 +23,13 @@
 
 <PageTitle>Register</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="register-container">
-    <MudGrid Justify="Justify.Center" Spacing="6">
-        <MudItem xs="12" sm="12" md="6" lg="5">
-            <MudPaper Class="register-form-paper" Elevation="0">
-                <EditForm Model="Input" OnValidSubmit="RegisterUser" FormName="register">
-                    <DataAnnotationsValidator/>
-                    
-                    <MudStack Spacing="4">
-                        <MudTextField @bind-Value="Input.Email" 
-                                      Label="E-mail" 
-                                      Variant="Variant.Outlined"
-                                      For="@(() => Input.Email)"
-                                      InputType="InputType.Email"
-                                      AutoComplete="username"
-                                      Class="register-input"/>
-                        
-                        <MudTextField @bind-Value="Input.Password" 
-                                      Label="Password" 
-                                      Variant="Variant.Outlined"
-                                      For="@(() => Input.Password)"
-                                      InputType="@PasswordInputType"
-                                      AutoComplete="new-password"
-                                      Adornment="Adornment.End"
-                                      AdornmentIcon="@PasswordIcon"
-                                      OnAdornmentClick="TogglePasswordVisibility"
-                                      Class="register-input"/>
-                        
-                        <MudTextField @bind-Value="Input.ConfirmPassword" 
-                                      Label="Re-type password" 
-                                      Variant="Variant.Outlined"
-                                      For="@(() => Input.ConfirmPassword)"
-                                      InputType="@ConfirmPasswordInputType"
-                                      AutoComplete="new-password"
-                                      Adornment="Adornment.End"
-                                      AdornmentIcon="@ConfirmPasswordIcon"
-                                      OnAdornmentClick="ToggleConfirmPasswordVisibility"
-                                      Class="register-input"/>
-                        
-                        <MudButton ButtonType="ButtonType.Submit" 
-                                   Variant="Variant.Outlined" 
-                                   Color="Color.Primary"
-                                   FullWidth="true"
-                                   Size="Size.Large"
-                                   Class="register-button"
-                                   Disabled="@_isSubmitting">
-                            @if (_isSubmitting)
-                            {
-                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                                <span>Creating account...</span>
-                            }
-                            else
-                            {
-                                <span>Save</span>
-                            }
-                        </MudButton>
-                    </MudStack>
-                </EditForm>
-            </MudPaper>
-        </MudItem>
-        
-        <MudItem xs="12" sm="12" md="6" lg="5">
-            <MudPaper Class="user-type-paper" Elevation="0">
-                <MudStack Spacing="4" AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.h6" Class="user-type-title">Select User Type</MudText>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="register-container">
+    <MudPaper Class="register-form-paper" Elevation="0">
+        <MudForm @ref="form" Model="Input" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+            <MudStack Spacing="4">
+                <!-- User Type Selection at the top -->
+                <div class="user-type-section">
+                    <MudText Typo="Typo.h6" Class="user-type-title">Register as...</MudText>
                     
                     <MudStack Row="true" Spacing="4" Justify="Justify.Center" Class="user-type-buttons">
                         <div class="@GetUserTypeClass("Candidate")" @onclick="@(() => SelectUserType("Candidate"))">
@@ -105,24 +49,82 @@
                     
                     @if (!string.IsNullOrEmpty(_userTypeError))
                     {
-                        <MudText Color="Color.Error" Typo="Typo.body2" Class="mt-2">@_userTypeError</MudText>
+                        <MudText Color="Color.Error" Typo="Typo.body2" Class="mt-2 text-center">@_userTypeError</MudText>
                     }
-                </MudStack>
-            </MudPaper>
-            
-            <MudDivider Class="my-6"/>
-            
-            <MudPaper Class="external-login-paper" Elevation="0">
-                <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.subtitle1">Use another service to register</MudText>
+                </div>
+                
+                <MudDivider Class="my-2"/>
+                
+                <!-- Email Field -->
+                <MudTextField @bind-Value="Input.Email" 
+                              Label="E-mail" 
+                              Variant="Variant.Outlined"
+                              For="@(() => Input.Email)"
+                              InputType="InputType.Email"
+                              AutoComplete="username"
+                              Immediate="true"
+                              Class="register-input"/>
+                
+                <!-- Password Field -->
+                <MudTextField @bind-Value="Input.Password" 
+                              Label="Password" 
+                              Variant="Variant.Outlined"
+                              For="@(() => Input.Password)"
+                              InputType="@PasswordInputType"
+                              AutoComplete="new-password"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@PasswordIcon"
+                              OnAdornmentClick="TogglePasswordVisibility"
+                              Immediate="true"
+                              Class="register-input"/>
+                
+                <!-- Confirm Password Field -->
+                <MudTextField @bind-Value="Input.ConfirmPassword" 
+                              Label="Re-type password" 
+                              Variant="Variant.Outlined"
+                              For="@(() => Input.ConfirmPassword)"
+                              InputType="@ConfirmPasswordInputType"
+                              AutoComplete="new-password"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@ConfirmPasswordIcon"
+                              OnAdornmentClick="ToggleConfirmPasswordVisibility"
+                              Immediate="true"
+                              Class="register-input"/>
+                
+                <!-- Submit Button -->
+                <MudButton OnClick="@OnValidSubmitAsync"
+                           Variant="Variant.Outlined" 
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Size="Size.Large"
+                           Class="register-button"
+                           Disabled="@_isSubmitting">
+                    @if (_isSubmitting)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        <span>Creating account...</span>
+                    }
+                    else
+                    {
+                        <span>Register</span>
+                    }
+                </MudButton>
+                
+                <MudDivider Class="my-2"/>
+                
+                <!-- External Login -->
+                <div class="external-login-section">
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">Use another service to register</MudText>
                     <ExternalLoginPicker/>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
+                </div>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
 </MudContainer>
 
 @code {
+    private MudForm? form;
+    private readonly InputModelValidator validator = new();
     private IEnumerable<IdentityError>? identityErrors;
     private bool _isSubmitting = false;
     private string _userTypeError = string.Empty;
@@ -130,7 +132,7 @@
     private bool _showPassword = false;
     private bool _showConfirmPassword = false;
 
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] public InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
@@ -162,12 +164,23 @@
         return Input.Profile == userType ? "user-type-button selected" : "user-type-button";
     }
 
-    public async Task RegisterUser(EditContext editContext)
+    private async Task OnValidSubmitAsync()
     {
-        if (string.IsNullOrEmpty(Input.Profile))
+        // Validate the form
+        await form!.Validate();
+        
+        var validationResult = await validator.ValidateAsync(Input);
+        
+        if (!validationResult.IsValid)
         {
-            _userTypeError = "Please select a user type";
-            Snackbar.Add("Please select a user type", Severity.Warning);
+            // Don't show validation errors in snackbar - they're already shown inline under each field
+            // Only set the user type error for display below the buttons
+            var profileError = validationResult.Errors.FirstOrDefault(e => e.PropertyName == nameof(Input.Profile));
+            if (profileError != null)
+            {
+                _userTypeError = profileError.ErrorMessage;
+            }
+            
             return;
         }
 
@@ -187,10 +200,11 @@
 
             if (!result.Succeeded)
             {
+                // Show Identity errors in Snackbar (server-side errors)
                 identityErrors = result.Errors;
                 foreach (var error in result.Errors)
                 {
-                    Snackbar.Add(error.Description, Severity.Error);
+                    Snackbar.Add(error.Description, MudSeverity.Error);
                 }
                 return;
             }
@@ -239,7 +253,8 @@
 
             await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
-            Snackbar.Add("Account created successfully!", Severity.Success);
+            // Success message in Snackbar
+            Snackbar.Add("Account created successfully!", MudSeverity.Success);
 
             if (UserManager.Options.SignIn.RequireConfirmedAccount)
             {
@@ -256,7 +271,8 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error during user registration");
-            Snackbar.Add("An error occurred during registration. Please try again.", Severity.Error);
+            // Generic error in Snackbar (server-side/unexpected errors)
+            Snackbar.Add("An error occurred during registration. Please try again.", MudSeverity.Error);
         }
         finally
         {
@@ -287,26 +303,70 @@
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
-    private sealed class InputModel
+    // Input Model
+    public sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
         public string Email { get; set; } = "";
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
         public string Password { get; set; } = "";
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
-
-        [Required] 
-        [Display(Name = "Profile")] 
         public string Profile { get; set; } = string.Empty;
+    }
+
+    // FluentValidation Validator
+    private class InputModelValidator : AbstractValidator<InputModel>
+    {
+        public InputModelValidator()
+        {
+            // User Type Validation
+            RuleFor(x => x.Profile)
+                .NotEmpty()
+                .WithMessage("Please select a user type (Candidate or Employer)")
+                .Must(x => x == "Candidate" || x == "Employer")
+                .WithMessage("Invalid user type selected");
+
+            // Email Validation
+            RuleFor(x => x.Email)
+                .NotEmpty()
+                .WithMessage("Email is required")
+                .EmailAddress()
+                .WithMessage("Please enter a valid email address")
+                .MaximumLength(256)
+                .WithMessage("Email must not exceed 256 characters");
+
+            // Password Validation
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .WithMessage("Password is required")
+                .MinimumLength(6)
+                .WithMessage("Password must be at least 6 characters long")
+                .MaximumLength(100)
+                .WithMessage("Password must not exceed 100 characters")
+                .Matches(@"[A-Z]")
+                .WithMessage("Password must contain at least one uppercase letter")
+                .Matches(@"[a-z]")
+                .WithMessage("Password must contain at least one lowercase letter")
+                .Matches(@"[0-9]")
+                .WithMessage("Password must contain at least one number")
+                .Matches(@"[\W_]")
+                .WithMessage("Password must contain at least one special character");
+
+            // Confirm Password Validation
+            RuleFor(x => x.ConfirmPassword)
+                .NotEmpty()
+                .WithMessage("Password confirmation is required")
+                .Equal(x => x.Password)
+                .WithMessage("The password and confirmation password do not match");
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<InputModel>
+                .CreateWithOptions((InputModel)model, x => x.IncludeProperties(propertyName)));
+            
+            if (result.IsValid)
+                return Array.Empty<string>();
+            
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
     }
 }
