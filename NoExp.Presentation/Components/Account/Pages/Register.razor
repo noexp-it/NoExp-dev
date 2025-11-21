@@ -35,8 +35,7 @@
                         <MudButton Variant="Variant.Outlined" 
                                    Class="@GetUserTypeClass("Candidate")" 
                                    OnClick="@(() => SelectUserType("Candidate"))" 
-                                   DisableElevation="false" 
-                                   Style="@GetButtonStyle("Candidate")">
+                                   DisableElevation="false">
                             <MudStack AlignItems="AlignItems.Center" Spacing="2">
                                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
                                 <MudText Typo="Typo.body1">Candidate</MudText>
@@ -46,8 +45,7 @@
                         <MudButton Variant="Variant.Outlined" 
                                    Class="@GetUserTypeClass("Employer")" 
                                    OnClick="@(() => SelectUserType("Employer"))" 
-                                   DisableElevation="false" 
-                                   Style="@GetButtonStyle("Employer")">
+                                   DisableElevation="false">
                             <MudStack AlignItems="AlignItems.Center" Spacing="2">
                                 <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large" />
                                 <MudText Typo="Typo.body1">Employer</MudText>
@@ -171,21 +169,6 @@
     private string GetUserTypeClass(string userType)
     {
         return Input.Profile == userType ? "user-type-button selected" : "user-type-button";
-    }
-
-    private string GetButtonStyle(string userType)
-    {
-        bool isSelected = Input.Profile == userType;
-        
-        if (isSelected)
-        {
-            return "min-width:0; border: 2px solid #1b6ec2; border-radius: 16px; padding: 1.5rem 2rem; " +
-                   "background: linear-gradient(135deg, rgba(27, 110, 194, 0.1) 0%, rgba(37, 140, 251, 0.1) 100%); " +
-                   "box-shadow: 0 4px 16px rgba(27, 110, 194, 0.3); text-transform: none;";
-        }
-        
-        return "min-width:0; border: 2px solid rgba(27, 110, 194, 0.3); border-radius: 16px; padding: 1.5rem 2rem; " +
-               "background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); text-transform: none;";
     }
 
     private static string GetRoleName(string profileType)

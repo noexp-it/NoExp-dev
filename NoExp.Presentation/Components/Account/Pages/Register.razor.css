@@ -101,72 +101,88 @@
     gap: 1rem;
 }
 
-/* User Type Buttons (Light Theme with Blue Accents) - Updated for MudButton
+/* User Type Button Styles
    ========================================================================== */
 
 ::deep .user-type-button {
-    flex: 1;
-    max-width: 180px;
+    min-width: 180px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-::deep .user-type-button button,
 ::deep .user-type-button .mud-button-root {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 2px solid rgba(27, 110, 194, 0.3) !important;
-    border-radius: 16px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
     padding: 1.5rem 2rem !important;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    user-select: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-    text-transform: none !important;
+    background: rgba(200, 200, 200, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: auto;
+    min-height: 120px;
 }
 
-::deep .user-type-button:hover button,
-::deep .user-type-button:hover .mud-button-root {
-    border-color: rgba(27, 110, 194, 0.6) !important;
-    background: rgba(255, 255, 255, 1) !important;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(27, 110, 194, 0.2) !important;
+::deep .user-type-button .mud-button-root:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(200, 200, 200, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-::deep .user-type-button.selected button,
+/* User Type Button - Selected State */
 ::deep .user-type-button.selected .mud-button-root {
-    border: 2px solid #1b6ec2 !important;
-    border-color: #1b6ec2 !important;
-    background: linear-gradient(135deg, rgba(27, 110, 194, 0.1) 0%, rgba(37, 140, 251, 0.1) 100%) !important;
-    box-shadow: 0 4px 16px rgba(27, 110, 194, 0.3) !important;
+    border-color: #594AE2;
+    background: linear-gradient(135deg, rgba(89, 74, 226, 0.3) 0%, rgba(89, 74, 226, 0.2) 100%);
+    box-shadow: 0 0 20px rgba(89, 74, 226, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* User Type Button - Icons */
+::deep .user-type-button.selected .mud-button-root:hover {
+    border-color: #7B68FF;
+    background: linear-gradient(135deg, rgba(89, 74, 226, 0.4) 0%, rgba(89, 74, 226, 0.3) 100%);
+    box-shadow: 0 0 25px rgba(89, 74, 226, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Icon Styling */
 ::deep .user-type-button .mud-icon-root {
-    color: rgba(27, 110, 194, 0.7);
+    font-size: 2.5rem;
+    color: rgba(150, 150, 150, 0.9);
     transition: all 0.3s ease;
-}
-
-::deep .user-type-button:hover .mud-icon-root {
-    color: rgba(27, 110, 194, 0.9);
 }
 
 ::deep .user-type-button.selected .mud-icon-root {
-    color: #031b33;
+    color: #9B8AFF;
+    filter: drop-shadow(0 0 8px rgba(89, 74, 226, 0.6));
 }
 
-/* User Type Button - Text */
-::deep .user-type-button .mud-text {
-    color: rgba(60, 60, 67, 0.85);
-    font-weight: 500;
-    transition: all 0.3s ease;
+::deep .user-type-button:hover .mud-icon-root {
+    color: rgba(180, 180, 180, 1);
+    transform: scale(1.1);
 }
 
-::deep .user-type-button:hover .mud-text {
-    color: rgba(27, 110, 194, 0.9);
+::deep .user-type-button.selected:hover .mud-icon-root {
+    color: #B8ACFF;
 }
 
-::deep .user-type-button.selected .mud-text {
-    color: #1b6ec2;
+/* Text Styling in Buttons */
+::deep .user-type-button .mud-typography {
+    color: rgba(150, 150, 150, 0.9);
     font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+::deep .user-type-button.selected .mud-typography {
+    color: #9B8AFF;
+}
+
+::deep .user-type-button:hover .mud-typography {
+    color: rgba(180, 180, 180, 1);
+}
+
+::deep .user-type-button.selected:hover .mud-typography {
+    color: #B8ACFF;
+}
+
+/* Stack spacing inside buttons */
+::deep .user-type-button .mud-stack {
+    gap: 0.75rem;
 }
 
 /* External Login Section
@@ -208,7 +224,6 @@
         max-width: 100%;
     }
     
-    ::deep .user-type-button button,
     ::deep .user-type-button .mud-button-root {
         max-width: 100%;
         width: 100%;
@@ -233,5 +248,17 @@
     .user-type-title {
         margin-bottom: 1rem;
         font-size: 1.1rem;
+    }
+    
+    ::deep .user-type-button .mud-button-root {
+        min-height: 100px;
+    }
+    
+    ::deep .user-type-button .mud-icon-root {
+        font-size: 2rem;
+    }
+    
+    ::deep .user-type-button .mud-typography {
+        font-size: 1rem;
     }
 }
