@@ -1,0 +1,264 @@
+/* ==========================================================================
+   REGISTRATION PAGE STYLES
+   ========================================================================== */
+
+/* Layout & Container
+   ========================================================================== */
+
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* Form Paper (Dark Theme)
+   ========================================================================== */
+
+.register-form-paper {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Input Fields
+   ========================================================================== */
+
+.register-input {
+    margin-bottom: 0.5rem;
+}
+
+/* Deep selectors for MudBlazor input components */
+::deep .register-input .mud-input-root {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+}
+
+::deep .register-input .mud-input-outlined .mud-input-root {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+::deep .register-input .mud-input-outlined:hover .mud-input-root {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+::deep .register-input .mud-input-outlined.mud-input-focused .mud-input-root {
+    border-color: #594AE2;
+}
+
+::deep .register-input .mud-input-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+::deep .register-input input {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+::deep .register-input .mud-input-adornment {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Submit Button
+   ========================================================================== */
+
+.register-button {
+    margin-top: 1rem;
+    border-radius: 12px;
+    text-transform: none;
+    font-weight: 600;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.register-button:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* User Type Section
+   ========================================================================== */
+
+.user-type-section {
+    width: 100%;
+    padding: 1rem 0;
+}
+
+.user-type-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.user-type-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* User Type Button Styles
+   ========================================================================== */
+
+::deep .user-type-button {
+    min-width: 180px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::deep .user-type-button .mud-button-root {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 1.5rem 2rem !important;
+    background: rgba(200, 200, 200, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: auto;
+    min-height: 120px;
+}
+
+::deep .user-type-button .mud-button-root:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(200, 200, 200, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* User Type Button - Selected State */
+::deep .user-type-button.selected .mud-button-root {
+    border-color: #594AE2;
+    background: linear-gradient(135deg, rgba(89, 74, 226, 0.3) 0%, rgba(89, 74, 226, 0.2) 100%);
+    box-shadow: 0 0 20px rgba(89, 74, 226, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+::deep .user-type-button.selected .mud-button-root:hover {
+    border-color: #7B68FF;
+    background: linear-gradient(135deg, rgba(89, 74, 226, 0.4) 0%, rgba(89, 74, 226, 0.3) 100%);
+    box-shadow: 0 0 25px rgba(89, 74, 226, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Icon Styling */
+::deep .user-type-button .mud-icon-root {
+    font-size: 2.5rem;
+    color: rgba(150, 150, 150, 0.9);
+    transition: all 0.3s ease;
+}
+
+::deep .user-type-button.selected .mud-icon-root {
+    color: #9B8AFF;
+    filter: drop-shadow(0 0 8px rgba(89, 74, 226, 0.6));
+}
+
+::deep .user-type-button:hover .mud-icon-root {
+    color: #9B8AFF;
+    transform: scale(1.1);
+}
+
+::deep .user-type-button.selected:hover .mud-icon-root {
+    color: #B8ACFF;
+}
+
+/* Text Styling in Buttons */
+::deep .user-type-button .mud-typography {
+    color: rgba(150, 150, 150, 0.9);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+::deep .user-type-button.selected .mud-typography {
+    color: #9B8AFF;
+}
+
+    ::deep .user-type-button:hover .mud-typography {
+        color: #9B8AFF;
+    }
+
+::deep .user-type-button.selected:hover .mud-typography {
+    color: #B8ACFF;
+}
+
+/* Stack spacing inside buttons */
+::deep .user-type-button .mud-stack {
+    gap: 0.75rem;
+}
+
+/* External Login Section
+   ========================================================================== */
+
+.external-login-section {
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+::deep .external-login-section .mud-text {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+}
+
+/* Divider
+   ========================================================================== */
+
+::deep .mud-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .register-form-paper {
+        padding: 2rem 1.5rem;
+    }
+    
+    .user-type-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    ::deep .user-type-button {
+        max-width: 100%;
+    }
+    
+    ::deep .user-type-button .mud-button-root {
+        max-width: 100%;
+        width: 100%;
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .register-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .register-form-paper {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+    
+    .user-type-section {
+        padding: 0.5rem 0;
+    }
+    
+    .user-type-title {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    ::deep .user-type-button .mud-button-root {
+        min-height: 100px;
+    }
+    
+    ::deep .user-type-button .mud-icon-root {
+        font-size: 2rem;
+    }
+    
+    ::deep .user-type-button .mud-typography {
+        font-size: 1rem;
+    }
+}
