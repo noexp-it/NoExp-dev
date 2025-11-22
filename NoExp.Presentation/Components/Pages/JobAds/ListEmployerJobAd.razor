@@ -12,32 +12,52 @@
 
 @foreach (var jobAd in jobAds)
 {
-    <a href="@($"/JobAds/Details/{jobAd.Id}")" class="text-decoration-none">
-        <MudCard class="m-3" style="cursor: pointer;">
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12" sm="1">
-                        <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+    <MudCard Class="m-3 employer-job-ad-card">
+        <MudCardHeader Class="job-ad-header">
+            <CardHeaderContent>
+                <MudText Class="fs-5 fw-bold">@jobAd.Title</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert" 
+                         Color="Color.Default" 
+                         Dense="true"
+                         AnchorOrigin="Origin.TopRight"
+                         TransformOrigin="Origin.TopRight">
+                    <MudMenuItem Icon="@Icons.Material.Filled.Visibility" 
+                                 IconColor="Color.Default"
+                                 Href="@($"/JobAds/Details/{jobAd.Id}")">
+                        View Details
+                    </MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Edit" 
+                                 IconColor="Color.Primary"
+                                 OnClick="@(() => HandleEdit(jobAd.Id))">
+                        Edit
+                    </MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Delete" 
+                                 IconColor="Color.Error"
+                                 OnClick="@(() => HandleRemove(jobAd.Id))">
+                        Remove
+                    </MudMenuItem>
+                </MudMenu>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12" sm="1">
+                    <MudImage Src="images/mony.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+                </MudItem>
+                <MudItem xs="12" sm="11">
+                    <MudText Align="Align.Center">@((MarkupString)jobAd.Description)</MudText>
+                    <MudItem Class="d-flex justify-content-center">
+                        @foreach (var skill in jobAd.TechStack)
+                        {
+                            <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
+                        }
                     </MudItem>
-                    <MudItem xs="12" sm="11">
-                        <MudText Class="fs-5 fw-bold" Align="Align.Center">@jobAd.Title</MudText>
-                        <MudText Align="Align.Center">@((MarkupString)jobAd.Description)</MudText>
-                        <MudItem Class="d-flex justify-content-center">
-                            @foreach (var skill in jobAd.TechStack)
-                            {
-                                <MudChip T="string" Label="true" Color="Color.Info">@skill</MudChip>
-                            }
-                        </MudItem>
-                    </MudItem>
-                </MudGrid>
-                <MudCardActions Class="d-flex justify-content-end">
-                    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
-                    <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
-                    <MudButton>Apply Now!</MudButton>
-                </MudCardActions>
-            </MudCardContent>
-        </MudCard>
-    </a>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
@@ -66,4 +86,13 @@
         }
     }
 
+    private void HandleEdit(Guid jobAdId)
+    {
+        // TODO: Implement edit logic
+    }
+
+    private void HandleRemove(Guid jobAdId)
+    {
+        // TODO: Implement remove logic
+    }
 }

@@ -1,0 +1,16 @@
+.employer-job-ad-card {
+    position: relative;
+}
+
+.job-ad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.job-ad-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
