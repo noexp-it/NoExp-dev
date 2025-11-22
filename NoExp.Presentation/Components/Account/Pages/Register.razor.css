@@ -152,7 +152,7 @@
 }
 
 ::deep .user-type-button:hover .mud-icon-root {
-    color: rgba(180, 180, 180, 1);
+    color: #9B8AFF;
     transform: scale(1.1);
 }
 
@@ -172,9 +172,9 @@
     color: #9B8AFF;
 }
 
-::deep .user-type-button:hover .mud-typography {
-    color: rgba(180, 180, 180, 1);
-}
+    ::deep .user-type-button:hover .mud-typography {
+        color: #9B8AFF;
+    }
 
 ::deep .user-type-button.selected:hover .mud-typography {
     color: #B8ACFF;
